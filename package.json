@@ -1,0 +1,14 @@
+{
+  "name": "mediaplayer",
+  "version": "1.0.0",
+  "description": "MediaPlayer",
+  "main": "main.js",
+  "scripts": {
+    "test": "electron ."
+  },
+  "author": "Simas Juknelis",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^1.7.9"
+  }
+}

@@ -4,12 +4,10 @@ var pageDict,page,core;
 
 class CoreAgent {
   renderPage() {
-    page = new pageDict[activePage](params);
-    var intervalId = setInterval(function() {
-      if ( page.static ) {
+    page = new pageDict[activePage](params,function() {
+      setTimeout(function() {
         document.getElementById("content").innerHTML = page.static;
-        clearInterval(intervalId);
-      }
+      },10);
     });
   }
   openPage(id,newparams) {
@@ -23,7 +21,8 @@ class CoreAgent {
 window.onload = function() {
   pageDict = {
     MainPage,
-    MusicAlbumPage
+    MusicAlbumPage,
+    MusicListPage
   };
   core = new CoreAgent();
   core.renderPage();

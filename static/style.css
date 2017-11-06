@@ -9,6 +9,13 @@ button {
 p,button {
   font-size: 125%;
 }
+#musicbar {
+  background-color: #000;
+  color: #fff;
+  height: 50px;
+  padding-top: 10%;
+  text-align: center;
+}
 .big {
   font-size: 200%;
 }

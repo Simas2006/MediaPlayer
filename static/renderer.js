@@ -18,6 +18,12 @@ class CoreAgent {
   }
 }
 
+class MusicCoreAgent {
+  constructor() {
+    
+  }
+}
+
 window.onload = function() {
   pageDict = {
     MainPage,

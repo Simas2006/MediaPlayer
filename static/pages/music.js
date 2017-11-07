@@ -31,8 +31,8 @@ class MusicListPage {
   }
   renderAll(render) {
     this.static = `
-<button class="big" onclick="mcore.addToQueue(page.selected);">Add to Queue</button>
-<button class="big" onclick="page.toggleSelects()">${this.selectionText}elect All</button>
+<button class="big" onclick='page.addToQueue()'>Add to Queue</button>
+<button class="big" onclick='page.toggleSelects()'>${this.selectionText}elect All</button>
 <hr />
 ${this.files.map(item => "<button onclick='page.toggleItem(\"" + escape(item) + "\")'>" + item + (this.selected.indexOf(escape(item)) > -1 ? "&nbsp;".repeat(10) + "&#10004;" : "") + "</button>").join("<br />")}
 `;
@@ -57,5 +57,9 @@ ${this.files.map(item => "<button onclick='page.toggleItem(\"" + escape(item) + 
       this.selectionText = "Des";
     }
     this.render();
+  }
+  addToQueue() {
+    mcore.addToQueue(page.selected.map(item => params + "/" + escape(item)));
+    core.openPage("MainPage","");
   }
 }

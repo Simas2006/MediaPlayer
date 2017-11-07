@@ -11,7 +11,12 @@
 </head>
 <body>
   <div id="musicbar">
-    Playing: Nothing!
+    <p id="musicname">Playing: Nothing</p>
+    <button onclick="mcore.togglePlay()" id="playpause" class="musicbutton">&nbsp;</button>
+    <button onclick="mcore.playNextSong()" id="forwardbutton" class="musicbutton">&nbsp;</button>
+    <audio id="musicaudio" class="hidden" controls>
+      <source id="musicsrc" />
+    </audio>
   </div>
   <div id="content"></div>
 </body>

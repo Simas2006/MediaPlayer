@@ -12,10 +12,17 @@ p,button {
 #musicbar {
   background-color: #000;
   color: #fff;
-  height: 50px;
-  padding-top: 10%;
+  height: 5%;
   text-align: center;
 }
 .big {
   font-size: 200%;
+}
+.hidden {
+  display: none;
+}
+.musicbutton {
+  background-color: #000;
+  color: #fff;
+  display: inline;
 }

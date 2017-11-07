@@ -20,7 +20,40 @@ class CoreAgent {
 
 class MusicCoreAgent {
   constructor() {
-    
+    this.queue = [];
+    this.firstTrigger = true;
+    this.playing = false;
+    this.audio = document.getElementById("musicaudio");
+    this.audio.addEventListener("ended",this.playNextSong);
+  }
+  playNextSong() {
+    if ( mcore.queue.length < 1 ) {
+      mcore.audio.currentTime = 1e6;
+      document.getElementById("musicname").innerText = "Playing: Nothing";
+      document.getElementById("playpause").innerHTML = "";
+      document.getElementById("forwardbutton").innerHTML = "";
+      return;
+    }
+    document.getElementById("forwardbutton").innerHTML = "&#9193;";
+    var source = document.getElementById("musicsrc");
+    source.src = __dirname + "/../media/music/" + decodeURIComponent(mcore.queue[0]);
+    mcore.audio.load();
+    mcore.audio.play();
+    document.getElementById("musicname").innerText = "Playing: " + decodeURIComponent(decodeURIComponent(mcore.queue[0]));
+    mcore.queue = mcore.queue.slice(1,mcore.audio.length);
+    mcore.playing = true;
+    document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
+  }
+  addToQueue(names) {
+    this.queue = this.queue.concat(names);
+    if ( document.getElementById("musicaudio").ended || this.firstTrigger ) this.playNextSong();
+    this.firstTrigger = false;
+  }
+  togglePlay() {
+    this.playing = ! this.playing;
+    document.getElementById("playpause").innerHTML = this.playing ? "||" : "&#9654;";
+    if ( this.playing ) this.audio.play();
+    else this.audio.pause();
   }
 }
 
@@ -31,5 +64,6 @@ window.onload = function() {
     MusicListPage
   };
   core = new CoreAgent();
+  mcore = new MusicCoreAgent();
   core.renderPage();
 }

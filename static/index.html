@@ -5,7 +5,7 @@
   <title>MediaPlayer</title>
   <link rel="stylesheet" type="text/css" href="style.css" />
   <script src="renderer.js"></script>
-  <script src="pages/misc.js"></script>
+  <script src="pages/external.js"></script>
   <script src="pages/music.js"></script>
   <script src="pages/photos.js"></script>
 </head>
@@ -14,6 +14,7 @@
     <p id="musicname">Playing: Nothing</p>
     <button onclick="mcore.togglePlay()" id="playpause" class="musicbutton">&nbsp;</button>
     <button onclick="mcore.playNextSong()" id="forwardbutton" class="musicbutton">&nbsp;</button>
+    <button onclick="core.openPage('MusicQueuePage','')" class="musicbutton">Q</button>
     <audio id="musicaudio" class="hidden" controls>
       <source id="musicsrc" />
     </audio>

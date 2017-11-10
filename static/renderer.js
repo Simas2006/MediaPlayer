@@ -32,9 +32,11 @@ class MusicCoreAgent {
       document.getElementById("musicname").innerText = "Playing: Nothing";
       document.getElementById("playpause").innerHTML = "";
       document.getElementById("forwardbutton").innerHTML = "";
+      document.getElementById("queuebutton").innerHTML = "";
       return;
     }
     document.getElementById("forwardbutton").innerHTML = "&#9193;";
+    document.getElementById("queuebutton").innerHTML = "Q";
     var source = document.getElementById("musicsrc");
     source.src = __dirname + "/../media/music/" + decodeURIComponent(mcore.queue[0]);
     mcore.audio.load();
@@ -43,6 +45,7 @@ class MusicCoreAgent {
     mcore.queue = mcore.queue.slice(1,mcore.audio.length);
     mcore.playing = true;
     document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
+    if ( activePage == "MusicQueuePage" ) page.render();
   }
   addToQueue(names) {
     this.queue = this.queue.concat(names);
@@ -61,7 +64,8 @@ window.onload = function() {
   pageDict = {
     MainPage,
     MusicAlbumPage,
-    MusicListPage
+    MusicListPage,
+    MusicQueuePage
   };
   core = new CoreAgent();
   mcore = new MusicCoreAgent();

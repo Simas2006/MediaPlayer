@@ -74,7 +74,8 @@ window.onload = function() {
     PhotoAlbumPage,
     PhotoListPage,
     PhotoViewerPage,
-    GameListPage
+    GameListPage,
+    GamePlayPage
   };
   core = new CoreAgent();
   mcore = new MusicCoreAgent();

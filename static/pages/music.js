@@ -23,7 +23,7 @@ class MusicListPage {
     t.selectionText = "S";
     fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
       if ( err ) throw err;
-      t.files = files;
+      t.files = files.filter(item => item != ".DS_Store");
       t.render = function() {
         t.renderAll(render);
       }

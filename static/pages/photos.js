@@ -5,6 +5,7 @@ class PhotoAlbumPage {
     var t = this;
     fs.readdir(__dirname + "/../media/photos",function(err,files) {
       if ( err ) throw err;
+      files = files.filter(item => item != ".DS_Store");
       t.static = `
 <button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />

@@ -1,3 +1,5 @@
+var fs = require("fs");
+
 class MainPage {
   constructor(params,render) {
     this.static = `
@@ -7,6 +9,8 @@ class MainPage {
 <button class="big" onclick='core.openPage("PhotoAlbumPage","")'>Open Photos</button>
 <br />
 <button class="big" onclick='core.openPage("MusicAlbumPage","")'>Open Music</button>
+<br />
+<button class="big" onclick='core.openPage("GameListPage","")'>Open Games</button>
 `;
     render();
   }

@@ -33,6 +33,7 @@ class MusicCoreAgent {
       document.getElementById("playpause").innerHTML = "";
       document.getElementById("forwardbutton").innerHTML = "";
       document.getElementById("queuebutton").innerHTML = "";
+      if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
       return;
     }
     document.getElementById("forwardbutton").innerHTML = "&#9193;";

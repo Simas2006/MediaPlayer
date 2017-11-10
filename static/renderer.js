@@ -59,6 +59,10 @@ class MusicCoreAgent {
     if ( this.playing ) this.audio.play();
     else this.audio.pause();
   }
+  toggleQueuePage() {
+    if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
+    else core.openPage("MusicQueuePage","");
+  }
 }
 
 window.onload = function() {

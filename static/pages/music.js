@@ -6,7 +6,7 @@ class MusicAlbumPage {
     fs.readdir(__dirname + "/../media/music",function(err,files) {
       if ( err ) throw err;
       t.static = `
-<p class="big">Albums</p>
+<button onclick="core.openPage('MainPage','')" class="big">Albums</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"MusicListPage\",\"" + item + "\")'>" + item + "</button>")}
 `;

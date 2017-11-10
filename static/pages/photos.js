@@ -6,7 +6,7 @@ class PhotoAlbumPage {
     fs.readdir(__dirname + "/../media/photos",function(err,files) {
       if ( err ) throw err;
       t.static = `
-<p class="big">Albums</p>
+<button onclick="core.openPage('MainPage','')" class="big">Albums</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"PhotoListPage\",\"" + item + "\")'>" + item + "</button>")}
 `;
@@ -18,10 +18,10 @@ ${files.map(item => "<button onclick='core.openPage(\"PhotoListPage\",\"" + item
 class PhotoListPage {
   constructor(params,render) {
     var t = this;
-    t.albumName = params;
+    this.albumName = params;
     fs.readdir(__dirname + "/../media/photos/" + params,function(err,files) {
       if ( err ) throw err;
-      t.files = files;
+      t.files = files.filter(item => item.toLowerCase().endsWith(".jpg") || item.toLowerCase().endsWith(".png"));
       t.render = function() {
         t.renderAll(render);
       }
@@ -30,12 +30,18 @@ class PhotoListPage {
   }
   renderAll(render) {
     this.static = `
-<button onclick="core.openPage('PhotoAlbumPage','') class="big">${params} &larr;</button>
+<button onclick="core.openPage('PhotoAlbumPage','')" class="big">${params} &larr;</button>
 <hr />
 ${this.files.map(item => `
-
-`)}
+<img src="${__dirname}/../media/photos/${this.albumName}/${item}" class="inline" onclick="core.openPage('PhotoViewerPage','${item}')" width="200" height="200" />
+`).join("")}
 `;
     render();
+  }
+}
+
+class PhotoViewerPage {
+  constructor(params,render) {
+
   }
 }

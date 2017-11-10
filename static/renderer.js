@@ -70,7 +70,10 @@ window.onload = function() {
     MainPage,
     MusicAlbumPage,
     MusicListPage,
-    MusicQueuePage
+    MusicQueuePage,
+    PhotoAlbumPage,
+    PhotoListPage,
+    PhotoViewerPage
   };
   core = new CoreAgent();
   mcore = new MusicCoreAgent();

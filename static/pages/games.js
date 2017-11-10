@@ -7,7 +7,7 @@ class GameListPage {
       if ( err ) throw err;
       var links = data.toString().trim().split("\n").map(item => item.split(","));
       t.static = `
-<button class="big" onclick="core.openPage('MainPage','')">Games</button>
+<button class="big" onclick="core.openPage('MainPage','')">Games &larr;</button>
 <hr>
 ${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(",")}')">${item[0]}</button>`).join("<br />")}
 `;
@@ -20,7 +20,7 @@ class GamePlayPage {
   constructor(params,render) {
     params = params.split(",");
     this.static = `
-<button class="big" onclick="core.openPage('GameListPage','')">${params[0]}</button>
+<button class="big" onclick="core.openPage('GameListPage','')">${params[0]} &larr;</button>
 <hr />
 <iframe src="http://${params[1]}" width="100%" height="${window.screen.height}"></iframe>
 `;

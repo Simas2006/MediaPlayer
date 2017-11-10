@@ -6,7 +6,7 @@ class MusicAlbumPage {
     fs.readdir(__dirname + "/../media/music",function(err,files) {
       if ( err ) throw err;
       t.static = `
-<button onclick="core.openPage('MainPage','')" class="big">Albums</button>
+<button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"MusicListPage\",\"" + item + "\")'>" + item + "</button>")}
 `;
@@ -32,7 +32,7 @@ class MusicListPage {
   }
   renderAll(render) {
     this.static = `
-<button onclick="core.openPage('MainPage','')" class="big">${this.albumName}</button>
+<button onclick="core.openPage('MainPage','')" class="big">${this.albumName} &larr;</button>
 <hr />
 <button onclick='page.addToQueue()'>Add to Queue</button>
 <button onclick='page.toggleSelects()'>${this.selectionText}elect All</button>

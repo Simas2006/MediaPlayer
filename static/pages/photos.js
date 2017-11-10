@@ -6,7 +6,7 @@ class PhotoAlbumPage {
     fs.readdir(__dirname + "/../media/photos",function(err,files) {
       if ( err ) throw err;
       t.static = `
-<button onclick="core.openPage('MainPage','')" class="big">Albums</button>
+<button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"PhotoListPage\",\"" + item + "\")'>" + item + "</button>")}
 `;
@@ -66,7 +66,7 @@ class PhotoViewerPage {
 `
     }
     this.static = `
-<button onclick="core.openPage('PhotoListPage','${this.albumName}')" class="big">${this.albumName}/${this.files[this.index]}</button>
+<button onclick="core.openPage('PhotoListPage','${this.albumName}')" class="big">${this.albumName}/${this.files[this.index]} &larr;</button>
 ${text}
 <div style="text-align: center" class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>

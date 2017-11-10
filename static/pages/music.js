@@ -18,6 +18,7 @@ ${files.map(item => "<button onclick='core.openPage(\"MusicListPage\",\"" + item
 class MusicListPage {
   constructor(params,render) {
     var t = this;
+    t.albumName = params;
     t.selected = [];
     t.selectionText = "S";
     fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
@@ -31,8 +32,10 @@ class MusicListPage {
   }
   renderAll(render) {
     this.static = `
-<button class="big" onclick='page.addToQueue()'>Add to Queue</button>
-<button class="big" onclick='page.toggleSelects()'>${this.selectionText}elect All</button>
+<button onclick="core.openPage('MainPage','')" class="big">${this.albumName}</button>
+<hr />
+<button onclick='page.addToQueue()'>Add to Queue</button>
+<button onclick='page.toggleSelects()'>${this.selectionText}elect All</button>
 <hr />
 ${this.files.map(item => "<button onclick='page.toggleItem(\"" + escape(item) + "\")'>" + item + (this.selected.indexOf(escape(item)) > -1 ? "&nbsp;".repeat(10) + "&#10004;" : "") + "</button>").join("<br />")}
 `;

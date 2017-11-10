@@ -8,7 +8,7 @@ class PhotoAlbumPage {
       t.static = `
 <button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />
-${files.map(item => "<button onclick='core.openPage(\"PhotoListPage\",\"" + item + "\")'>" + item + "</button>")}
+${files.map(item => "<button onclick='core.openPage(\"PhotoListPage\",\"" + item + "\")'>" + item + "</button>").join("<br />")}
 `;
       render();
     });

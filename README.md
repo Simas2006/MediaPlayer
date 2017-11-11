@@ -11,7 +11,7 @@ First, run `npm install` to install dependencies.
 
 Windows & Linux: Run `electron .` in the main directory to run the app (assuming Electron is installed globally), or open the packaged app (if provided).
 
-Mac: Use the provided packaged app.
+Mac: Run the included `copy_files.sh` file to copy your media to the app, and run the provided packaged app.
 
 ### Music Bar
 The Music Bar (black bar at the top) controls the currently playing music.

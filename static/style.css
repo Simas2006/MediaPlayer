@@ -9,6 +9,9 @@ button {
 p,button {
   font-size: 125%;
 }
+webview {
+  height: 100%;
+}
 #musicbar {
   background-color: #000;
   color: #fff;

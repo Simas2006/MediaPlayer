@@ -4,7 +4,14 @@ let win
 
 function createWindow() {
   var size = require("electron").screen.getPrimaryDisplay().size;
-  win = new BrowserWindow({width:size.width,height:size.height});
+  win = new BrowserWindow({
+    width: size.width,
+    height: size.height,
+    "nodeIntegration": "iframe",
+    webPreferences: {
+      webSecurity: false
+    }
+  });
   win.setMenu(null);
   win.loadURL("file://" + __dirname + "/static/index.html");
   win.webContents.openDevTools();

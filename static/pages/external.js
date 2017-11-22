@@ -10,6 +10,8 @@ class MainPage {
 <br />
 <button class="big" onclick='core.openPage("MusicAlbumPage","")'>Open Music</button>
 <br />
+<button class="big" onclick='core.openPage("GamePlayPage","YouTube,www.youtube.com")'>Open YouTube</button>
+<br />
 <button class="big" onclick='core.openPage("GameListPage","")'>Open Games</button>
 `;
     render();

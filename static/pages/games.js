@@ -20,9 +20,9 @@ class GamePlayPage {
   constructor(params,render) {
     params = params.split(",");
     this.static = `
-<button class="big" onclick="core.openPage('GameListPage','')">${params[0]} &larr;</button>
+<button class="big" onclick="core.openPage('${params[1] == "www.youtube.com" ? "MainPage" : "GameListPage"}','')">${params[0]} &larr;</button>
 <hr />
-<iframe src="http://${params[1]}" width="100%" height="${window.screen.height}"></iframe>
+  <webview disablewebsecurity src="http://${params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
 `;
     render();
   }

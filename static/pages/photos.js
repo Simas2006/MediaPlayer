@@ -47,6 +47,10 @@ class PhotoViewerPage {
     var t = this;
     this.albumName = params.split(",")[0];
     this.index = parseInt(params.split(",")[1]);
+    this.slideshow = false;
+    setInterval(function() {
+      if ( t.slideshow ) t.moveImage(1);
+    },1000);
     fs.readdir(__dirname + "/../media/photos/" + this.albumName,function(err,files) {
       if ( err ) throw err;
       t.files = files.filter(item => item.toLowerCase().endsWith(".jpg") || item.toLowerCase().endsWith(".jpeg") || item.toLowerCase().endsWith(".png") || item.toLowerCase().endsWith(".mp4") || item.toLowerCase().endsWith(".mov"));
@@ -73,6 +77,7 @@ ${text}
 <div style="text-align: center" class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>
   <button onclick="page.moveImage(1)" class="inline">&rarr;</button>
+  <button onclick="page.slideshow = ! page.slideshow" class="inline">&#9193;</button>
 </div>
 `;
     render();

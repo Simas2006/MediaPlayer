@@ -1,4 +1,5 @@
 var fs = require("fs");
+var BIG_PHOTO_DIRS = true;
 
 class PhotoAlbumPage {
   constructor(params,render) {
@@ -9,7 +10,7 @@ class PhotoAlbumPage {
       t.static = `
 <button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />
-${files.map(item => "<button onclick='core.openPage(\"PhotoListPage\",\"" + item + "\")'>" + item + "</button>").join("<br />")}
+${files.map(item => "<button onclick='core.openPage(\"" + (BIG_PHOTO_DIRS ? "PhotoViewerPage" : "PhotoListPage") + "\",\"" + item + (BIG_PHOTO_DIRS ? ",0" : "") + "\")'>" + item + "</button>").join("<br />")}
 `;
       render();
     });
@@ -58,7 +59,7 @@ class PhotoViewerPage {
   renderAll(render) {
     var text;
     if ( this.files[this.index].toLowerCase().endsWith(".jpg") || this.files[this.index].toLowerCase().endsWith(".jpeg") || this.files[this.index].toLowerCase().endsWith(".png") ) {
-      text = `<img src="${__dirname}/../media/photos/${this.albumName}/${this.files[this.index]}" onclick="page.moveImage(1)" />`
+      text = `<img src="${__dirname}/../media/photos/${this.albumName}/${this.files[this.index]}" onclick="page.moveImage(1)" width=${window.screen.width} height=${window.screen.height} />`;
     } else {
       text = `
 <video width="100%" controls>
@@ -67,7 +68,7 @@ class PhotoViewerPage {
 `
     }
     this.static = `
-<button onclick="core.openPage('PhotoListPage','${this.albumName}')" class="big">${this.albumName}/${this.files[this.index]} &larr;</button>
+<button onclick="core.openPage('${BIG_PHOTO_DIRS ? "PhotoAlbumPage" : "PhotoListPage"}','${this.albumName}')" class="big">${this.albumName}/${this.files[this.index]} &larr;</button>
 ${text}
 <div style="text-align: center" class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>

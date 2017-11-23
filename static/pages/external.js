@@ -28,6 +28,7 @@ class MusicQueuePage {
   renderAll(render) {
     this.static = `
 <p class="big">Queue</p>
+<p class="pointer" onclick="page.clearQueue()">Clear Queue</p>
 <hr />
 ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
 <p>
@@ -47,6 +48,10 @@ ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
     var item = mcore.queue[index];
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
     mcore.queue.splice(index + modifier,0,item);
+    this.render();
+  }
+  clearQueue() {
+    mcore.queue = [];
     this.render();
   }
 }

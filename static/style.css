@@ -32,3 +32,6 @@ webview {
 .inline {
   display: inline;
 }
+.pointer {
+  cursor: default;
+}

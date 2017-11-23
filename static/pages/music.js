@@ -19,9 +19,9 @@ ${files.map(item => "<button onclick='core.openPage(\"MusicListPage\",\"" + item
 class MusicListPage {
   constructor(params,render) {
     var t = this;
-    t.albumName = params;
-    t.selected = [];
-    t.selectionText = "S";
+    this.albumName = params;
+    this.selected = [];
+    this.selectionText = "S"; // is inverted
     fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
       if ( err ) throw err;
       t.files = files.filter(item => item != ".DS_Store");

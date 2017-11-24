@@ -52,6 +52,7 @@ ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
   }
   clearQueue() {
     mcore.queue = [];
+    mcore.playNextSong();
     this.render();
   }
 }

@@ -3,13 +3,18 @@ var fs = require("fs");
 class MusicAlbumPage {
   constructor(params,render) {
     var t = this;
-    fs.readdir(__dirname + "/../media/music",function(err,files) {
+    fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
       if ( err ) throw err;
       files = files.filter(item => item != ".DS_Store");
+      var limits = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
+      console.log(limits);
+      if ( limits.length > 0 ) {
+        core.openPage("MusicListPage",params);
+      }
       t.static = `
 <button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />
-${files.map(item => "<button onclick='core.openPage(\"MusicListPage\",\"" + item + "\")'>" + item + "</button>").join("<br />")}
+${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + params + "/" + item + "\")'>" + item + "</button>").join("<br />")}
 `;
       render();
     });

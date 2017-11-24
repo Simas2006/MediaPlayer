@@ -83,7 +83,9 @@ class PhotoViewerPage {
     function mergePath() {
       t.static = `
 <button onclick="core.openPage('${BIG_PHOTO_DIRS ? "PhotoAlbumPage" : "PhotoListPage"}','${t.albumName}')" class="big">${t.albumName}/${t.files[t.index]} &larr;</button>
-${text}
+<div class="center">
+  ${text}
+</div>
 <div style="text-align: center" class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>
   <button onclick="page.moveImage(1)" class="inline">&rarr;</button>

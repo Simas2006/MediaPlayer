@@ -1,5 +1,6 @@
 var fs = require("fs");
 var BIG_PHOTO_DIRS = true;
+var RATIO_ACCURACY = 0.05;
 
 class PhotoAlbumPage {
   constructor(params,render) {
@@ -50,7 +51,7 @@ class PhotoViewerPage {
     this.slideshow = false;
     setInterval(function() {
       if ( t.slideshow ) t.moveImage(1);
-    },1000);
+    },5000);
     fs.readdir(__dirname + "/../media/photos/" + this.albumName,function(err,files) {
       if ( err ) throw err;
       t.files = files.filter(item => item.toLowerCase().endsWith(".jpg") || item.toLowerCase().endsWith(".jpeg") || item.toLowerCase().endsWith(".png") || item.toLowerCase().endsWith(".mp4") || item.toLowerCase().endsWith(".mov"));
@@ -61,18 +62,28 @@ class PhotoViewerPage {
     });
   }
   renderAll(render) {
+    var t = this;
     var text;
     if ( this.files[this.index].toLowerCase().endsWith(".jpg") || this.files[this.index].toLowerCase().endsWith(".jpeg") || this.files[this.index].toLowerCase().endsWith(".png") ) {
-      text = `<img src="${__dirname}/../media/photos/${this.albumName}/${this.files[this.index]}" onclick="page.moveImage(1)" width=${window.screen.width} height=${window.screen.height} />`;
+      var img = new Image();
+      img.src = __dirname + "/../media/photos/" + this.albumName + "/" + this.files[this.index];
+      img.onload = function() {
+        var ratio = t.calculateAccurateRatio(img);
+        text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
+        console.log(text);
+        mergePath();
+      }
     } else {
       text = `
 <video width="100%" controls>
   <source src="${__dirname}/../media/photos/${this.albumName}/${this.files[this.index]}" />
 </video>
-`
+`;
+      mergePath();
     }
-    this.static = `
-<button onclick="core.openPage('${BIG_PHOTO_DIRS ? "PhotoAlbumPage" : "PhotoListPage"}','${this.albumName}')" class="big">${this.albumName}/${this.files[this.index]} &larr;</button>
+    function mergePath() {
+      t.static = `
+<button onclick="core.openPage('${BIG_PHOTO_DIRS ? "PhotoAlbumPage" : "PhotoListPage"}','${t.albumName}')" class="big">${t.albumName}/${t.files[t.index]} &larr;</button>
 ${text}
 <div style="text-align: center" class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>
@@ -80,12 +91,19 @@ ${text}
   <button onclick="page.slideshow = ! page.slideshow" class="inline">&#9193;</button>
 </div>
 `;
-    render();
+      render();
+    }
   }
   moveImage(modifier) {
     this.index += modifier;
     if ( this.index < 0 ) this.index = this.files.length - 1;
     if ( this.index >= this.files.length ) this.index = 0;
     this.render();
+  }
+  calculateAccurateRatio(img) {
+    for ( var r = 1; r > 0; r -= RATIO_ACCURACY ) {
+      if ( img.width * r <= screen.width && img.height * r <= screen.height ) return r;
+    }
+    throw "Ratio went under 0";
   }
 }

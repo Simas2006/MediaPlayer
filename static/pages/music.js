@@ -7,12 +7,11 @@ class MusicAlbumPage {
       if ( err ) throw err;
       files = files.filter(item => item != ".DS_Store");
       var limits = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
-      console.log(limits);
       if ( limits.length > 0 ) {
         core.openPage("MusicListPage",params);
       }
       t.static = `
-<button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
+<button onclick="core.openPage('MainPage','')" class="big">${params.slice(1) || "Albums"} &larr;</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + params + "/" + item + "\")'>" + item + "</button>").join("<br />")}
 `;
@@ -24,7 +23,7 @@ ${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + par
 class MusicListPage {
   constructor(params,render) {
     var t = this;
-    this.albumName = params;
+    this.albumName = params.slice(1);
     this.selected = [];
     this.selectionText = "S"; // is inverted
     fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {

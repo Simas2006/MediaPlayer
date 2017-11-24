@@ -9,9 +9,6 @@ button {
 p,button {
   font-size: 125%;
 }
-img {
-  display: block;
-}
 webview {
   height: 100%;
 }
@@ -40,4 +37,5 @@ webview {
 }
 .center {
   text-align: center;
+  display: block;
 }

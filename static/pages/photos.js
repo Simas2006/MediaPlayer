@@ -70,7 +70,6 @@ class PhotoViewerPage {
       img.onload = function() {
         var ratio = t.calculateAccurateRatio(img);
         text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
-        console.log(text);
         mergePath();
       }
     } else {

@@ -27,6 +27,12 @@ class MusicCoreAgent {
     this.audio.addEventListener("ended",this.playNextSong);
   }
   playNextSong() {
+    function decodeItAllTheWay(s) {
+      for ( var i = 0; i < 10; i++ ) {
+        s = decodeURIComponent(s);
+      }
+      return s;
+    }
     if ( mcore.queue.length < 1 ) {
       mcore.audio.currentTime = 1e6;
       document.getElementById("musicname").innerText = "Playing: Nothing";
@@ -39,10 +45,10 @@ class MusicCoreAgent {
     document.getElementById("forwardbutton").innerHTML = "&#9193;";
     document.getElementById("queuebutton").innerHTML = "Q";
     var source = document.getElementById("musicsrc");
-    source.src = __dirname + "/../media/music/" + decodeURIComponent(mcore.queue[0]);
+    source.src = __dirname + "/../media/music/" + decodeItAllTheWay(mcore.queue[0]);
     mcore.audio.load();
     mcore.audio.play();
-    document.getElementById("musicname").innerText = "Playing: " + decodeURIComponent(decodeURIComponent(mcore.queue[0]));
+    document.getElementById("musicname").innerText = "Playing: " + decodeItAllTheWay(mcore.queue[0]);
     mcore.queue = mcore.queue.slice(1,mcore.audio.length);
     mcore.playing = true;
     document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";

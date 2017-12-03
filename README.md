@@ -6,12 +6,8 @@ Create a folder called "media" in the main folder. Inside that folder, create tw
 
 `<name of game shown in app>,<url to game>`
 
-## How to Use
-First, run `npm install` to install dependencies.
-
-Windows & Linux: Run `electron .` in the main directory to run the app (assuming Electron is installed globally), or open the packaged app (if provided).
-
-Mac: Unzip `MediaPlayer.zip`, run the included `copy_files.sh` file to copy your media to the app, and run the provided packaged app.
+## How to Start
+Run `start.sh` in the main directory to run the app. It will set everything up and launch the app.
 
 ### Music Bar
 The Music Bar (black bar at the top) controls the currently playing music.

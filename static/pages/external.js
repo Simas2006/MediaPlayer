@@ -29,19 +29,27 @@ class MusicQueuePage {
     this.static = `
 <p class="big">Queue</p>
 <p class="pointer" onclick="page.clearQueue()">Clear Queue</p>
+<p class="pointer" onclick="page.shuffleSongs()">Shuffle</p>
 <hr />
 ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
 <p>
   ${decodeURIComponent(decodeURIComponent(item))}
-  <button class="inline" onclick="page.removeItem(${index})">X</button>
   <button class="inline" onclick="page.moveItem(${index},-1)">&uarr;</button>
   <button class="inline" onclick="page.moveItem(${index},1)">&darr;</button>
+  <button class="inline" onclick="page.removeItem(${index})">X</button>
+  <button class="inline" onclick="page.removeAlbum(${index})">AX</button>
 `).join("<br />") : `<p>Nothing!</p>`}
 `;
     render();
   }
   removeItem(index) {
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
+    this.render();
+  }
+  removeAlbum(index) {
+    var albumName = mcore.queue[index].split("/");
+    albumName = albumName.slice(0,albumName.length - 1);
+    mcore.queue = mcore.queue.filter(item => ! item.startsWith(albumName.join("/")));
     this.render();
   }
   moveItem(index,modifier) {
@@ -53,6 +61,15 @@ ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
   clearQueue() {
     mcore.queue = [];
     mcore.playNextSong();
+    this.render();
+  }
+  shuffleSongs() {
+    for ( var i = mcore.queue.length - 1; i > 0; i-- ) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = mcore.queue[i];
+      mcore.queue[i] = mcore.queue[j];
+      mcore.queue[j] = temp;
+    }
     this.render();
   }
 }

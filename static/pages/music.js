@@ -28,7 +28,7 @@ class MusicListPage {
     this.selectionText = "S"; // is inverted
     fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
       if ( err ) throw err;
-      t.files = files.filter(item => item != ".DS_Store");
+      t.files = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
       t.render = function() {
         t.renderAll(render);
       }

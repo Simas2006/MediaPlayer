@@ -13,10 +13,16 @@
 <body>
   <div id="musicbar">
     <p id="musicname">Playing: Nothing</p>
-    <button onclick="mcore.togglePlay()" id="playpause" class="musicbutton">&nbsp;</button>
-    <button onclick="mcore.playNextSong()" id="forwardbutton" class="musicbutton">&nbsp;</button>
-    <button onclick="mcore.toggleQueuePage()" id="queuebutton" class="musicbutton"></button>
-    <audio id="musicaudio" class="hidden" controls>
+    <div id="controls">
+      <button onclick="mcore.togglePlay()" id="playpause" class="musicbutton"></button>
+      <button onclick="mcore.playNextSong()" class="musicbutton">&#9193;</button>
+      <button onclick="mcore.toggleQueuePage()" class="musicbutton">Q</button>
+      <br />
+      <button onclick="mcore.changeVolume(5)" class="musicbutton">&uarr;</button>
+      <span id="volume">100%</span>
+      <button onclick="mcore.changeVolume(-5)" class="musicbutton">&darr;</button>
+    </div>
+    <audio id="musicaudio" class="hidden" >
       <source id="musicsrc" />
     </audio>
   </div>

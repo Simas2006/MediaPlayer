@@ -23,6 +23,7 @@ class MusicCoreAgent {
     this.queue = [];
     this.firstTrigger = true;
     this.playing = false;
+    this.volume = 100;
     this.audio = document.getElementById("musicaudio");
     this.audio.addEventListener("ended",this.playNextSong);
   }
@@ -36,14 +37,11 @@ class MusicCoreAgent {
     if ( mcore.queue.length < 1 ) {
       mcore.audio.currentTime = 1e6;
       document.getElementById("musicname").innerText = "Playing: Nothing";
-      document.getElementById("playpause").innerHTML = "";
-      document.getElementById("forwardbutton").innerHTML = "";
-      document.getElementById("queuebutton").innerHTML = "";
+      document.getElementById("controls").style.display = "none";
       if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
       return;
     }
-    document.getElementById("forwardbutton").innerHTML = "&#9193;";
-    document.getElementById("queuebutton").innerHTML = "Q";
+    document.getElementById("controls").style.display = "block";
     var source = document.getElementById("musicsrc");
     source.src = __dirname + "/../media/music/" + decodeItAllTheWay(mcore.queue[0]);
     mcore.audio.load();
@@ -69,6 +67,12 @@ class MusicCoreAgent {
     if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
     else core.openPage("MusicQueuePage","");
   }
+  changeVolume(dv) {
+    if ( this.volume + dv < 0 || this.volume + dv > 100 ) return;
+    this.volume += dv;
+    document.getElementById("volume").innerText = this.volume + "%";
+    this.audio.volume = this.volume / 100;
+  }
 }
 
 window.onload = function() {
@@ -86,4 +90,5 @@ window.onload = function() {
   core = new CoreAgent();
   mcore = new MusicCoreAgent();
   core.renderPage();
+  document.getElementById("controls").style.display = "none";
 }

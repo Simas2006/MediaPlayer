@@ -18,13 +18,17 @@ ${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(
 
 class GamePlayPage {
   constructor(params,render) {
-    params = params.split(",");
-    mcore.togglePlay();
+    this.params = params.split(",");
+    if ( mcore.playing ) mcore.togglePlay();
     this.static = `
-<button class="big" onclick="mcore.togglePlay(); core.openPage('${params[1] == "www.youtube.com" ? "MainPage" : "GameListPage"}','')">${params[0]} &larr;</button>
+<button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>
 <hr />
-<webview disablewebsecurity src="http://${params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
+<webview disablewebsecurity src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
 `;
     render();
+  }
+  exitPage() {
+    if ( ! mcore.playing ) mcore.togglePlay();
+    core.openPage(this.params[1] == "www.youtube.com" ? "MainPage" : "GameListPage","");
   }
 }

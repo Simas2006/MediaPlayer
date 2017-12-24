@@ -12,13 +12,22 @@ p,button {
 webview {
   height: 100%;
 }
+td {
+  width: 33%;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+}
 #musicbar {
   background-color: #000;
   color: #fff;
-  height: 5%;
+  height: 20%;
   text-align: center;
+  width: 100%;
 }
-.big {
+#musicname {
+  font-weight: normal;
+}
+.big,.musicbutton {
   font-size: 200%;
 }
 .hidden {
@@ -28,6 +37,9 @@ webview {
   background-color: #000;
   color: #fff;
   display: inline;
+}
+.box {
+  border: 1px solid #fff;
 }
 .inline {
   display: inline;

@@ -11,18 +11,29 @@
   <script src="pages/games.js"></script>
 </head>
 <body>
-  <div id="musicbar">
-    <p id="musicname">Playing: Nothing</p>
-    <div id="controls">
-      <button onclick="mcore.togglePlay()" id="playpause" class="musicbutton"></button>
-      <button onclick="mcore.playNextSong()" class="musicbutton">&#9193;</button>
-      <button onclick="mcore.toggleQueuePage()" class="musicbutton">Q</button>
-      <br />
-      <button onclick="mcore.changeVolume(5)" class="musicbutton">&uarr;</button>
-      <span id="volume">100%</span>
-      <button onclick="mcore.changeVolume(-5)" class="musicbutton">&darr;</button>
-    </div>
-    <audio id="musicaudio" class="hidden" >
+  <div>
+    <table id="musicbar">
+      <tr>
+        <td>
+          <button onclick="mcore.openQueue()" class="musicbutton box">Q</button>
+          <button onclick="mcore.setTime(0)" class="musicbutton">&#9194;</button>
+          <button onclick="mcore.togglePlay()" class="musicbutton" id="playpause">&#9654;</button>
+          <button onclick="mcore.playNextSong()" class="musicbutton">&#9193;</button>
+        </td>
+        <td>
+          <h1 id="musicname">Not Playing</h1>
+          <span class="big" id="timespent">--:--</span>
+          <canvas id="time" class="inline" height="30" width="200"></canvas>
+          <span class="big" id="timeleft">--:--</span>
+        </td>
+        <td>
+          <button onclick="mcore.mute()" class="musicbutton">&#128263;</button>
+          <canvas id="volume" class="inline" height="30" width="200"></canvas>
+          <span class="big">&#128266;</span>
+        </td>
+      </tr>
+    </table>
+    <audio id="musicaudio" class="hidden">
       <source id="musicsrc" />
     </audio>
   </div>

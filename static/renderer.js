@@ -1,9 +1,12 @@
 var activePage = "MainPage";
 var params = "";
-var pageDict,page;
+var pageDict,page,queue;
 var core,mcore,dcore;
 
 class CoreAgent {
+  constructor() {
+    this.queueOpen = false;
+  }
   renderPage() {
     page = new pageDict[activePage](params,function() {
       setTimeout(function() {
@@ -16,6 +19,20 @@ class CoreAgent {
     activePage = id;
     params = newparams;
     this.renderPage();
+  }
+  toggleQueue() {
+    this.queueOpen = ! this.queueOpen;
+    if ( this.queueOpen ) {
+      document.getElementById("queue").style.display = "";
+      queue = new MusicQueuePage("",function() {
+        setTimeout(function() {
+          document.getElementById("queue").innerHTML = queue.static;
+        },10);
+      });
+    } else {
+      document.getElementById("queue").style.display = "none";
+      queue = null;
+    }
   }
 }
 
@@ -56,7 +73,7 @@ class MusicCoreAgent {
     mcore.queue = mcore.queue.slice(1,mcore.audio.length);
     mcore.playing = true;
     document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
-    if ( activePage == "MusicQueuePage" ) page.render();
+    if ( core.queueOpen ) queue.render();
   }
   addToQueue(names) {
     this.hasSong = true;
@@ -71,16 +88,13 @@ class MusicCoreAgent {
     if ( this.playing ) this.audio.play();
     else this.audio.pause();
   }
-  toggleQueuePage() {
-    if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
-    else core.openPage("MusicQueuePage","");
-  }
   setTime(nt) {
     if ( ! this.playing ) return;
     this.audio.currentTime = nt;
   }
   mute() {
     this.volume = 0;
+    this.audio.volume = 0;
     dcore.drawVolumeSlider();
   }
 }
@@ -110,6 +124,7 @@ class DrawingCoreAgent {
     var rect = this.getBoundingClientRect();
     var x = event.clientX - rect.left;
     mcore.volume = Math.round(x / this.width * 100);
+    mcore.audio.volume = mcore.volume / 100;
     dcore.drawVolumeSlider();
   }
   drawTimeSlider() {
@@ -137,7 +152,6 @@ window.onload = function() {
     MainPage,
     MusicAlbumPage,
     MusicListPage,
-    MusicQueuePage,
     PhotoAlbumPage,
     PhotoListPage,
     PhotoViewerPage,

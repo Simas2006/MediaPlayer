@@ -28,16 +28,16 @@ class MusicQueuePage {
   renderAll(render) {
     this.static = `
 <p class="big">Queue</p>
-<p class="pointer" onclick="page.clearQueue()">Clear Queue</p>
-<p class="pointer" onclick="page.shuffleSongs()">Shuffle</p>
+<p class="pointer" onclick="queue.clearQueue()">Clear Queue</p>
+<p class="pointer" onclick="queue.shuffleSongs()">Shuffle</p>
 <hr />
 ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
 <p>
   ${decodeURIComponent(decodeURIComponent(item))}
-  <button class="inline" onclick="page.moveItem(${index},-1)">&uarr;</button>
-  <button class="inline" onclick="page.moveItem(${index},1)">&darr;</button>
-  <button class="inline" onclick="page.removeItem(${index})">X</button>
-  <button class="inline" onclick="page.removeAlbum(${index})">AX</button>
+  <button class="inline" onclick="queue.moveItem(${index},-1)">&uarr;</button>
+  <button class="inline" onclick="queue.moveItem(${index},1)">&darr;</button>
+  <button class="inline" onclick="queue.removeItem(${index})">X</button>
+  <button class="inline" onclick="queue.removeAlbum(${index})">AX</button>
 `).join("<br />") : `<p>Nothing!</p>`}
 `;
     render();

@@ -11,32 +11,35 @@
   <script src="pages/games.js"></script>
 </head>
 <body>
-  <div>
-    <table id="musicbar">
-      <tr>
-        <td>
-          <button onclick="mcore.openQueue()" class="musicbutton box">Q</button>
-          <button onclick="mcore.setTime(0)" class="musicbutton">&#9194;</button>
-          <button onclick="mcore.togglePlay()" class="musicbutton" id="playpause">&#9654;</button>
-          <button onclick="mcore.playNextSong()" class="musicbutton">&#9193;</button>
-        </td>
-        <td>
-          <h1 id="musicname">Not Playing</h1>
-          <span class="big" id="timespent">--:--</span>
-          <canvas id="time" class="inline" height="30" width="200"></canvas>
-          <span class="big" id="timeleft">--:--</span>
-        </td>
-        <td>
-          <button onclick="mcore.mute()" class="musicbutton">&#128263;</button>
-          <canvas id="volume" class="inline" height="30" width="200"></canvas>
-          <span class="big">&#128266;</span>
-        </td>
-      </tr>
-    </table>
-    <audio id="musicaudio" class="hidden">
-      <source id="musicsrc" />
-    </audio>
-  </div>
-  <div id="content"></div>
+  <audio id="musicaudio" class="hidden">
+    <source id="musicsrc" />
+  </audio>
+  <table id="musicbar">
+    <tr>
+      <td class="musiccol">
+        <button onclick="core.toggleQueue()" class="musicbutton">Q</button>
+        <button onclick="mcore.setTime(0)" class="musicbutton">&#9194;</button>
+        <button onclick="mcore.togglePlay()" class="musicbutton" id="playpause">&#9654;</button>
+        <button onclick="mcore.playNextSong()" class="musicbutton">&#9193;</button>
+      </td>
+      <td class="musiccol">
+        <h1 id="musicname">Not Playing</h1>
+        <span class="big" id="timespent">--:--</span>
+        <canvas id="time" class="inline" height="30" width="200"></canvas>
+        <span class="big" id="timeleft">--:--</span>
+      </td>
+      <td class="musiccol">
+        <button onclick="mcore.mute()" class="musicbutton">&#128263;</button>
+        <canvas id="volume" class="inline" height="30" width="200"></canvas>
+        <span class="musicbutton">&#128266;</span>
+      </td>
+    </tr>
+  </table>
+  <table id="contentbar">
+    <tr>
+      <td class="musiccol contentcol" id="queue" style="display: none" />
+      <td class="contentcol" id="content" />
+    </tr>
+  </table>
 </body>
 </html>

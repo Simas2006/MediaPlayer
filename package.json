@@ -9,7 +9,8 @@
   "author": "Simas Juknelis",
   "license": "MIT",
   "dependencies": {
-    "electron": "^1.7.9"
+    "electron": "^1.7.9",
+    "exif-js": "^2.3.0"
   },
   "devDependencies": {
     "electron": "^1.7.9"

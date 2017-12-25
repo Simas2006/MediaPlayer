@@ -27,7 +27,7 @@ class MusicQueuePage {
   }
   renderAll(render) {
     this.static = `
-<p class="big">Queue</p>
+<span class="big">Queue</span>
 <button class="musicbutton box red" onclick="queue.clearQueue()">X</button>
 <button class="musicbutton" onclick="queue.shuffleSongs()">&#128256;</button>
 <hr />

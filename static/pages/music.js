@@ -42,7 +42,12 @@ class MusicListPage {
 <button onclick='page.addToQueue()'>Add to Queue</button>
 <button onclick='page.toggleSelects()'>${this.selectionText}elect All</button>
 <hr />
-${this.files.map(item => "<button onclick='page.toggleItem(\"" + escape(item) + "\")'>" + item + (this.selected.indexOf(escape(item)) > -1 ? "&nbsp;".repeat(10) + "&#10004;" : "") + "</button>").join("<br />")}
+${this.files.map(item => {
+  var songName = decodeURIComponent(decodeURIComponent(item));
+  songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+  if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
+  return "<button onclick='page.toggleItem(\"" + escape(item) + "\")'>" + songName + (this.selected.indexOf(escape(item)) > -1 ? "&nbsp;".repeat(10) + "&#10004;" : "") + "</button>"
+}).join("<br />")}
 `;
     render();
   }

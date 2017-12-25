@@ -141,6 +141,7 @@ class DrawingCoreAgent {
     document.getElementById("timeleft").innerText = "-" + padNumbers(Math.floor((mcore.audio.duration - mcore.audio.currentTime) / 60)) + ":" + padNumbers(Math.floor(((mcore.audio.duration - mcore.audio.currentTime) % 60)));
   }
   registerTimeClick(event) {
+    if ( ! mcore.hasSong ) return;
     var rect = this.getBoundingClientRect();
     var x = event.clientX - rect.left;
     mcore.audio.currentTime = x / this.width * mcore.audio.duration;

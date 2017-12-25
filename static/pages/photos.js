@@ -69,8 +69,12 @@ class PhotoViewerPage {
       img.src = __dirname + "/../media/photos/" + this.albumName + "/" + this.files[this.index];
       img.onload = function() {
         var ratio = t.calculateAccurateRatio(img);
-        text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
-        mergePath();
+        EXIF.getData(img,function() {
+          var ovalue = EXIF.getTag(this,"Orientation");
+          var rvalue = [0,-1,180,-1,-1,90,-1,270][ovalue - 1];
+          text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
+          mergePath();
+        });
       }
     } else {
       text = `
@@ -83,13 +87,13 @@ class PhotoViewerPage {
     function mergePath() {
       t.static = `
 <button onclick="core.openPage('${BIG_PHOTO_DIRS ? "PhotoAlbumPage" : "PhotoListPage"}','${t.albumName}')" class="big">${t.albumName}/${t.files[t.index]} &larr;</button>
-<div class="center">
-  ${text}
-</div>
-<div style="text-align: center" class="big">
+<div class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>
   <button onclick="page.moveImage(1)" class="inline">&rarr;</button>
   <button onclick="page.slideshow = ! page.slideshow" class="inline">&#9193;</button>
+</div>
+<div class="center">
+  ${text}
 </div>
 `;
       render();

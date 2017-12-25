@@ -113,7 +113,7 @@ class DrawingCoreAgent {
     var x = mcore.volume / 100 * canvas.width;
     ctx.fillRect(x - 5,0,10,canvas.height);
     ctx.fillStyle = "#fff";
-    ctx.font = "30px Arial";
+    ctx.font = "30px Copperplate";
     ctx.fillText(mcore.volume + "%",canvas.width * .375,canvas.height * .825);
   }
   registerVolumeClick(event) {

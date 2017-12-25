@@ -1,8 +1,17 @@
 body {
-  font-family: "Arial";
+  --musicbarbg: rgb(18,5,71);
+  --musicbarfg: rgb(255,255,0);
+  --contentbg: rgb(46,105,107);
+  --contentfg: rgb(255,255,255);
+  --mainfont: ""; /* Copperplate, Optima, Skia */
+  font-family: var(--mainfont);
+  background-color: var(--contentbg)
+  color: var(--contentfg)
 }
 button {
-  background-color: #fff;
+  background-color: var(--contentbg);
+  color: var(--contentfg);
+  font-family: var(--mainfont);
   border: 0px;
   display: block;
 }
@@ -16,14 +25,16 @@ table {
   width: 100%;
 }
 #musicbar {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--musicbarbg);
+  color: var(--musicbarfg);
   height: 20%;
   text-align: center;
 }
 #contentbar {
   vertical-align: top;
   height: 1000px;
+  background-color: var(--contentbg);
+  color: var(--contentfg);
 }
 #musicname {
   font-weight: normal;
@@ -32,11 +43,11 @@ table {
   width: 25%;
 }
 .musiccol {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--musicbarbg);
+  color: var(--musicbarfg);
   width: 33%;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #fff;
+  border-left: 1px solid var(--musicbarfg);
+  border-right: 1px solid var(--musicbarfg);
 }
 .contentcol {
   vertical-align: top;
@@ -48,8 +59,8 @@ table {
   display: none;
 }
 .musicbuttonsmall,.musicbutton {
-  background-color: #000;
-  color: #fff;
+  background-color: var(--musicbarbg);
+  color: var(--musicbarfg);
   display: inline;
 }
 .musicbutton {
@@ -59,7 +70,7 @@ table {
   display: inline;
 }
 .box {
-  border: 1px solid #fff;
+  border: 1px solid var(--musicbarfg);
 }
 .red {
   background-color: #f00;

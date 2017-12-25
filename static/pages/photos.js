@@ -109,10 +109,16 @@ class PhotoViewerPage {
     this.render();
   }
   calculateAccurateRatio(img) {
-    for ( var r = 1; r > 0; r -= RATIO_ACCURACY ) {
-      if ( img.width * r <= screen.width && img.height * r <= screen.height ) return r;
+    if ( img.width > screen.width || img.height > screen.height ) {
+      for ( var r = 1; r > 0; r -= RATIO_ACCURACY ) {
+        if ( img.width * r <= screen.width && img.height * r <= screen.height ) return r;
+      }
+    } else {
+      for ( var r = 1; true; r += RATIO_ACCURACY ) {
+        if ( img.width * r > screen.width && img.height * r > screen.height ) return r - RATIO_ACCURACY;
+      }
     }
-    throw "Ratio went under 0";
+    throw "wat (ratio calculator)";
   }
   rotate() {
     this.addedRotation += 90;

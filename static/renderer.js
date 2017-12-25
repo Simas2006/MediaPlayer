@@ -59,11 +59,13 @@ class MusicCoreAgent {
       return;
     }
     var songName = decodeURIComponent(decodeURIComponent(mcore.queue[0]));
+    var visualSongName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+    if ( ! isNaN(parseInt(visualSongName.slice(0,2))) ) visualSongName = visualSongName.slice(3);
     var source = document.getElementById("musicsrc");
     source.src = __dirname + "/../media/music/" + songName;
     mcore.audio.load();
     mcore.audio.play();
-    document.getElementById("musicname").innerText = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+    document.getElementById("musicname").innerText = visualSongName;
     mcore.queue = mcore.queue.slice(1,mcore.audio.length);
     mcore.playing = true;
     document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";

@@ -49,6 +49,7 @@ class PhotoViewerPage {
     this.albumName = params.split(",")[0];
     this.index = parseInt(params.split(",")[1]);
     this.slideshow = false;
+    this.addedRotation = 0;
     setInterval(function() {
       if ( t.slideshow ) t.moveImage(1);
     },5000);
@@ -71,7 +72,7 @@ class PhotoViewerPage {
         var ratio = t.calculateAccurateRatio(img);
         EXIF.getData(img,function() {
           var ovalue = EXIF.getTag(this,"Orientation");
-          var rvalue = [0,-1,180,-1,-1,90,-1,270][ovalue - 1];
+          var rvalue = ([0,-1,180,-1,-1,90,-1,270][ovalue - 1] || 0) + t.addedRotation;
           text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
           mergePath();
         });
@@ -91,8 +92,9 @@ class PhotoViewerPage {
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>
   <button onclick="page.moveImage(1)" class="inline">&rarr;</button>
   <button onclick="page.slideshow = ! page.slideshow" class="inline">&#9193;</button>
+  <button onclick="page.rotate()" class="inline">&#10559;</button>
 </div>
-<div class="center">
+<div class="center" style="overflow: hidden">
   ${text}
 </div>
 `;
@@ -103,6 +105,7 @@ class PhotoViewerPage {
     this.index += modifier;
     if ( this.index < 0 ) this.index = this.files.length - 1;
     if ( this.index >= this.files.length ) this.index = 0;
+    this.addedRotation = 0;
     this.render();
   }
   calculateAccurateRatio(img) {
@@ -110,5 +113,9 @@ class PhotoViewerPage {
       if ( img.width * r <= screen.width && img.height * r <= screen.height ) return r;
     }
     throw "Ratio went under 0";
+  }
+  rotate() {
+    this.addedRotation += 90;
+    this.render();
   }
 }

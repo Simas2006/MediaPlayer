@@ -1,9 +1,9 @@
 body {
-  --musicbarbg: rgb(18,5,71);
+  --musicbarbg: rgb(30,59,107);
   --musicbarfg: rgb(255,255,0);
-  --contentbg: rgb(46,105,107);
+  --contentbg: rgb(136,173,175);
   --contentfg: rgb(255,255,255);
-  --mainfont: ""; /* Copperplate, Optima, Skia */
+  --mainfont: "Copperplate"; /* : "Optima"; /**/
   font-family: var(--mainfont);
   background-color: var(--contentbg)
   color: var(--contentfg)

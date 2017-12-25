@@ -47,12 +47,6 @@ class MusicCoreAgent {
     this.audio.addEventListener("ended",this.playNextSong);
   }
   playNextSong() {
-    function decodeItAllTheWay(s) {
-      for ( var i = 0; i < 10; i++ ) {
-        s = decodeURIComponent(s);
-      }
-      return s;
-    }
     if ( mcore.queue.length <= 0 ) {
       mcore.hasSong = false;
       mcore.playing = false;
@@ -64,7 +58,7 @@ class MusicCoreAgent {
       if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
       return;
     }
-    var songName = decodeItAllTheWay(mcore.queue[0]);
+    var songName = decodeURIComponent(decodeURIComponent(mcore.queue[0]));
     var source = document.getElementById("musicsrc");
     source.src = __dirname + "/../media/music/" + songName;
     mcore.audio.load();

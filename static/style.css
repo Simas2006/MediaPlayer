@@ -47,14 +47,23 @@ table {
 .hidden {
   display: none;
 }
-.musicbutton {
+.musicbuttonsmall,.musicbutton {
   background-color: #000;
   color: #fff;
   display: inline;
+}
+.musicbutton {
   font-size: 300%;
 }
 .inline {
   display: inline;
+}
+.box {
+  border: 1px solid #fff;
+}
+.red {
+  background-color: #f00;
+  color: #fff;
 }
 .pointer {
   cursor: default;

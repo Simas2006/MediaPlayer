@@ -28,17 +28,23 @@ class MusicQueuePage {
   renderAll(render) {
     this.static = `
 <p class="big">Queue</p>
-<p class="pointer" onclick="queue.clearQueue()">Clear Queue</p>
-<p class="pointer" onclick="queue.shuffleSongs()">Shuffle</p>
+<button class="musicbutton box red" onclick="queue.clearQueue()">X</button>
+<button class="musicbutton" onclick="queue.shuffleSongs()">&#128256;</button>
 <hr />
-${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
+${mcore.queue.length > 0 ? mcore.queue.map((item,index) => {
+var songName = decodeURIComponent(decodeURIComponent(item));
+songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+return `
 <p>
-  ${decodeURIComponent(decodeURIComponent(item))}
-  <button class="inline" onclick="queue.moveItem(${index},-1)">&uarr;</button>
-  <button class="inline" onclick="queue.moveItem(${index},1)">&darr;</button>
-  <button class="inline" onclick="queue.removeItem(${index})">X</button>
-  <button class="inline" onclick="queue.removeAlbum(${index})">AX</button>
-`).join("<br />") : `<p>Nothing!</p>`}
+  ${songName}
+  <br />
+  <button class="musicbuttonsmall box" onclick="queue.moveToTop(${index})">&#8673;</button>
+  <button class="musicbuttonsmall box" onclick="queue.moveItem(${index},-1)">&uarr;</button>
+  <button class="musicbuttonsmall box" onclick="queue.moveItem(${index},1)">&darr;</button>
+  <button class="musicbuttonsmall box" onclick="queue.removeItem(${index})">X</button>
+  <button class="musicbuttonsmall box" onclick="queue.removeAlbum(${index})">AX</button>
+</p>
+`}).join("") : `<p>Nothing!</p>`}
 `;
     render();
   }
@@ -56,6 +62,12 @@ ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => `
     var item = mcore.queue[index];
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
     mcore.queue.splice(index + modifier,0,item);
+    this.render();
+  }
+  moveToTop(index) {
+    var item = mcore.queue[index];
+    mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
+    mcore.queue.splice(0,0,item);
     this.render();
   }
   clearQueue() {

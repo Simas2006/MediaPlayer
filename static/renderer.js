@@ -159,4 +159,5 @@ window.onload = function() {
   mcore = new MusicCoreAgent();
   dcore = new DrawingCoreAgent();
   core.renderPage();
+  dataManager.attachToken(Function.prototype);
 }

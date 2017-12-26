@@ -1,5 +1,5 @@
 var fs = require("fs");
-var crypto = require("crypto");
+var crypto_s = require("crypto");
 var request = require("request");
 var cg,id,token;
 var URL = "http://localhost:8000";
@@ -8,8 +8,8 @@ var KEY = "password";
 class Cryptographer {
   encrypt(text,key) {
     key = " ".repeat(32 - key.length) + key;
-    var iv = crypto.randomBytes(16);
-    var cipher = crypto.createCipheriv("aes-256-cbc",new Buffer(key),iv);
+    var iv = crypto_s.randomBytes(16);
+    var cipher = crypto_s.createCipheriv("aes-256-cbc",new Buffer(key),iv);
     var encrypted = cipher.update(text);
     encrypted = Buffer.concat([encrypted,cipher.final()]);
     return iv.toString("hex") + ":" + encrypted.toString("hex");
@@ -19,7 +19,7 @@ class Cryptographer {
     text = text.toString().split(":");
     var iv = new Buffer(text.shift(),"hex");
     var encrypted = new Buffer(text.join(":"),"hex");
-    var decipher = crypto.createDecipheriv("aes-256-cbc",new Buffer(key),iv);
+    var decipher = crypto_s.createDecipheriv("aes-256-cbc",new Buffer(key),iv);
     var decrypted = decipher.update(encrypted);
     decrypted = Buffer.concat([decrypted,decipher.final()]);
     return decrypted;
@@ -67,3 +67,5 @@ class OfflineModeManager {
     });
   }
 }
+
+var dataManager = new OnlineModeManager();

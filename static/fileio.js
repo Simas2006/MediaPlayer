@@ -61,7 +61,7 @@ class OnlineModeManager {
         "photo": ["png","jpg",".gif"],
         "music": ["mp4","m4a",".wav"]
       };
-      files = files.filter(item => extensions[type].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      files = files.filter(item => extensions[type].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
       if ( files.length < 1 ) {
         callback();
       } else {
@@ -80,7 +80,7 @@ class OfflineModeManager {
   retrieveList(fpath,callback) {
     fs.readdir(__dirname + "/media" + fpath,function(err,files) {
       if ( err ) throw err;
-      files = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      files = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
       callback(files);
     });
   }

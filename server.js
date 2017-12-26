@@ -82,8 +82,9 @@ app.use("/list",function(request,response) {
         return;
       }
       console.log("LIST " + url + " " + qs);
-      files = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
-      response.send(cg.encrypt(files.join(","),tokens[qs]));
+      var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      list = list.concat(files.filter(item => item.indexOf(".") <= -1));
+      response.send(cg.encrypt(list.join(","),tokens[qs]));
     });
   }
 });

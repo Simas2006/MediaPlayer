@@ -3,8 +3,7 @@ var fs = require("fs");
 class MusicAlbumPage {
   constructor(params,render) {
     var t = this;
-    fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
-      if ( err ) throw err;
+    dataManager.retrieveList("/music" + params,function(files) {
       files = files.filter(item => item != ".DS_Store");
       var limits = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
       if ( limits.length > 0 ) {
@@ -26,8 +25,7 @@ class MusicListPage {
     this.albumName = params.slice(1);
     this.selected = [];
     this.selectionText = "S"; // is inverted
-    fs.readdir(__dirname + "/../media/music/" + params,function(err,files) {
-      if ( err ) throw err;
+    dataManager.retrieveList("/music/" + params,function(files) {
       t.files = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
       t.render = function() {
         t.renderAll(render);

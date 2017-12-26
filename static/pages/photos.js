@@ -1,5 +1,4 @@
 var fs = require("fs");
-var BIG_PHOTO_DIRS = true;
 var RATIO_ACCURACY = 0.05;
 
 class PhotoAlbumPage {
@@ -15,31 +14,6 @@ ${files.map(item => "<button onclick='core.openPage(\"" + (BIG_PHOTO_DIRS ? "Pho
 `;
       render();
     });
-  }
-}
-
-class PhotoListPage {
-  constructor(params,render) {
-    var t = this;
-    this.albumName = params;
-    fs.readdir(__dirname + "/../media/photos/" + params,function(err,files) {
-      if ( err ) throw err;
-      t.files = files.filter(item => item.toLowerCase().endsWith(".jpg") || item.toLowerCase().endsWith(".jpeg") || item.toLowerCase().endsWith(".png") || item.toLowerCase().endsWith(".mp4") || item.toLowerCase().endsWith(".mov"));
-      t.render = function() {
-        t.renderAll(render);
-      }
-      t.render();
-    });
-  }
-  renderAll(render) {
-    this.static = `
-<button onclick="core.openPage('PhotoAlbumPage','')" class="big">${params} &larr;</button>
-<hr />
-${this.files.map((item,index) => `
-<img src="${item.toLowerCase().endsWith(".jpg") || item.toLowerCase().endsWith(".jpeg") || item.toLowerCase().endsWith(".png") ? `${__dirname}/../media/photos/${this.albumName}/${item}` : `${__dirname}/video.png`}" class="inline" onclick="core.openPage('PhotoViewerPage','${this.albumName},${index}')" width="200" height="200" />
-`).join("")}
-`;
-    render();
   }
 }
 

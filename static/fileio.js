@@ -54,6 +54,24 @@ class OnlineModeManager {
       callback(cg.decrypt(body,token).toString().split(","));
     });
   }
+  clearFile(type,callback) {
+    fs.readdir(__dirname + "/../loadedData",function(err,files) {
+      if ( err ) throw err;
+      var extensions = {
+        "photo": ["png","jpg",".gif"],
+        "music": ["mp4","m4a",".wav"]
+      };
+      files = files.filter(item => extensions[type].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      if ( files.length < 1 ) {
+        callback();
+      } else {
+        fs.unlink(__dirname + "/../loadedData/" + files[0],function(err) {
+          if ( err ) throw err;
+          callback();
+        });
+      }
+    });
+  }
 }
 
 class OfflineModeManager {
@@ -66,6 +84,7 @@ class OfflineModeManager {
       callback(files);
     });
   }
+  clearFile(address,callback) { callback(); }
 }
 
 var dataManager = new OnlineModeManager();

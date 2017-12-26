@@ -47,30 +47,32 @@ class MusicCoreAgent {
     this.audio.addEventListener("ended",this.playNextSong);
   }
   playNextSong() {
-    if ( mcore.queue.length <= 0 ) {
-      mcore.hasSong = false;
-      mcore.playing = false;
-      mcore.audio.currentTime = 1e6;
-      document.getElementById("musicname").innerText = "Not Playing";
-      document.getElementById("playpause").innerHTML = "&#9654;";
-      document.getElementById("timespent").innerText = "--:--";
-      document.getElementById("timeleft").innerText = "--:--";
-      if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
-      return;
-    }
-    var songName = decodeURIComponent(decodeURIComponent(mcore.queue[0]));
-    var visualSongName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-    if ( ! isNaN(parseInt(visualSongName.slice(0,2))) ) visualSongName = visualSongName.slice(3);
-    var source = document.getElementById("musicsrc");
-    dataManager.retrieveFile("/music/" + songName,function(address) {
-      source.src = address;
-      mcore.audio.load();
-      mcore.audio.play();
-      document.getElementById("musicname").innerText = visualSongName;
-      mcore.queue = mcore.queue.slice(1,mcore.audio.length);
-      mcore.playing = true;
-      document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
-      if ( core.queueOpen ) queue.render();
+    dataManager.clearFile("music",function() {
+      if ( mcore.queue.length <= 0 ) {
+        mcore.hasSong = false;
+        mcore.playing = false;
+        mcore.audio.currentTime = 1e6;
+        document.getElementById("musicname").innerText = "Not Playing";
+        document.getElementById("playpause").innerHTML = "&#9654;";
+        document.getElementById("timespent").innerText = "--:--";
+        document.getElementById("timeleft").innerText = "--:--";
+        if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
+        return;
+      }
+      var songName = decodeURIComponent(decodeURIComponent(mcore.queue[0]));
+      var visualSongName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+      if ( ! isNaN(parseInt(visualSongName.slice(0,2))) ) visualSongName = visualSongName.slice(3);
+      var source = document.getElementById("musicsrc");
+      dataManager.retrieveFile("/music/" + songName,function(address) {
+        source.src = address;
+        mcore.audio.load();
+        mcore.audio.play();
+        document.getElementById("musicname").innerText = visualSongName;
+        mcore.queue = mcore.queue.slice(1,mcore.audio.length);
+        mcore.playing = true;
+        document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
+        if ( core.queueOpen ) queue.render();
+      });
     });
   }
   addToQueue(names) {

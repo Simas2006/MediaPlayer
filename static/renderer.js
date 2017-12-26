@@ -154,7 +154,6 @@ window.onload = function() {
     MusicAlbumPage,
     MusicListPage,
     PhotoAlbumPage,
-    PhotoListPage,
     PhotoViewerPage,
     GameListPage,
     GamePlayPage

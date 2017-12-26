@@ -51,12 +51,13 @@ class MusicCoreAgent {
       if ( mcore.queue.length <= 0 ) {
         mcore.hasSong = false;
         mcore.playing = false;
-        mcore.audio.currentTime = 1e6;
+        mcore.firstTrigger = true;
+        mcore.audio.currentTime = 0;
+        mcore.audio.pause();
         document.getElementById("musicname").innerText = "Not Playing";
         document.getElementById("playpause").innerHTML = "&#9654;";
         document.getElementById("timespent").innerText = "--:--";
         document.getElementById("timeleft").innerText = "--:--";
-        if ( activePage == "MusicQueuePage" ) core.openPage("MainPage","");
         return;
       }
       var songName = decodeURIComponent(decodeURIComponent(mcore.queue[0]));
@@ -64,7 +65,7 @@ class MusicCoreAgent {
       if ( ! isNaN(parseInt(visualSongName.slice(0,2))) ) visualSongName = visualSongName.slice(3);
       var source = document.getElementById("musicsrc");
       dataManager.retrieveFile("/music/" + songName,function(address) {
-        source.src = address;
+        source.src = encodeURI(address);
         mcore.audio.load();
         mcore.audio.play();
         document.getElementById("musicname").innerText = visualSongName;
@@ -78,7 +79,7 @@ class MusicCoreAgent {
   addToQueue(names) {
     this.hasSong = true;
     this.queue = this.queue.concat(names);
-    if ( document.getElementById("musicaudio").ended || this.firstTrigger ) this.playNextSong();
+    if ( this.firstTrigger ) this.playNextSong();
     this.firstTrigger = false;
   }
   togglePlay() {

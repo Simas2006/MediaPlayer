@@ -4,13 +4,11 @@ var RATIO_ACCURACY = 0.05;
 class PhotoAlbumPage {
   constructor(params,render) {
     var t = this;
-    fs.readdir(__dirname + "/../media/photos",function(err,files) {
-      if ( err ) throw err;
-      files = files.filter(item => item != ".DS_Store");
+    dataManager.retrieveList("/photos",function(files) {
       t.static = `
 <button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
 <hr />
-${files.map(item => "<button onclick='core.openPage(\"" + (BIG_PHOTO_DIRS ? "PhotoViewerPage" : "PhotoListPage") + "\",\"" + item + (BIG_PHOTO_DIRS ? ",0" : "") + "\")'>" + item + "</button>").join("<br />")}
+${files.map(item => "<button onclick='core.openPage(\"" + "PhotoViewerPage" + "\",\"" + item + ",0\")'>" + item + "</button>").join("<br />")}
 `;
       render();
     });
@@ -41,16 +39,20 @@ class PhotoViewerPage {
     var text;
     if ( this.files[this.index].toLowerCase().endsWith(".jpg") || this.files[this.index].toLowerCase().endsWith(".jpeg") || this.files[this.index].toLowerCase().endsWith(".png") ) {
       var img = new Image();
-      img.src = __dirname + "/../media/photos/" + this.albumName + "/" + this.files[this.index];
-      img.onload = function() {
-        var ratio = t.calculateAccurateRatio(img);
-        EXIF.getData(img,function() {
-          var ovalue = EXIF.getTag(this,"Orientation");
-          var rvalue = ([0,-1,180,-1,-1,90,-1,270][ovalue - 1] || 0) + t.addedRotation;
-          text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
-          mergePath();
+      dataManager.clearFile("photo",function() {
+        dataManager.retrieveFile("/photos/" + t.albumName + "/" + t.files[t.index],function(address) {
+          img.src = address;
+          img.onload = function() {
+            var ratio = t.calculateAccurateRatio(img);
+            EXIF.getData(img,function() {
+              var ovalue = EXIF.getTag(this,"Orientation");
+              var rvalue = ([0,-1,180,-1,-1,90,-1,270][ovalue - 1] || 0) + t.addedRotation;
+              text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
+              mergePath();
+            });
+          }
         });
-      }
+      });
     } else {
       text = `
 <video width="100%" controls>
@@ -61,7 +63,7 @@ class PhotoViewerPage {
     }
     function mergePath() {
       t.static = `
-<button onclick="core.openPage('${BIG_PHOTO_DIRS ? "PhotoAlbumPage" : "PhotoListPage"}','${t.albumName}')" class="big">${t.albumName}/${t.files[t.index]} &larr;</button>
+<button onclick="core.openPage('PhotoAlbumPage','${t.albumName}')" class="big">${t.albumName}/${t.files[t.index]} &larr;</button>
 <div class="big">
   <button onclick="page.moveImage(-1)" class="inline">&larr;</button>
   <button onclick="page.moveImage(1)" class="inline">&rarr;</button>

@@ -43,7 +43,7 @@ function randomString(length) {
 
 app.get("/connect",function(request,response) {
   var id = randomString(5);
-  var key = randomString(40);
+  var key = randomString(32);
   tokens[id] = key;
   console.log("CONNECT " + id + " " + key);
   response.send(id + " " + cg.encrypt(key,KEY));

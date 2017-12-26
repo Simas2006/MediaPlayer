@@ -44,7 +44,7 @@ class OnlineModeManager {
       var fname = __dirname + "/../loadedData/" + fpath.split("/")[fpath.split("/").length - 1];
       fs.writeFile(fname,cg.decrypt(body,token),function(err) {
         if ( err ) throw err;
-        callback();
+        callback(fname);
       });
     });
   }
@@ -52,6 +52,18 @@ class OnlineModeManager {
     request(URL + "/list" + fpath + "?" + id,function(err,meh,body) {
       if ( err ) throw err;
       callback(cg.decrypt(body,token).toString().split(","));
+    });
+  }
+}
+
+class OfflineModeManager {
+  attackToken(callback) { callback(); }
+  retrieveFile(fpath,callback) { callback(__dirname + "/media" + fpath); }
+  retrieveList(fpath,callback) {
+    fs.readdir(__dirname + "/media" + fpath,function(err,files) {
+      if ( err ) throw err;
+      files = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      callback(files);
     });
   }
 }

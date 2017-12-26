@@ -7,6 +7,8 @@ var PORT = process.argv[3] || 8000;
 var cg;
 var tokens = {};
 
+if ( KEY ) throw "No key supplied";
+
 class Cryptographer {
   encrypt(text,key) {
     key = " ".repeat(32 - key.length) + key;

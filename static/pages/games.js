@@ -3,15 +3,17 @@ var fs = require("fs");
 class GameListPage {
   constructor(params,render) {
     var t = this;
-    fs.readFile(__dirname + "/../media/games.txt",function(err,data) {
-      if ( err ) throw err;
-      var links = data.toString().trim().split("\n").map(item => item.split(","));
-      t.static = `
-<button class="big" onclick="core.openPage('MainPage','')">Games &larr;</button>
-<hr>
-${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(",")}')">${item[0]}</button>`).join("<br />")}
-`;
-      render();
+    dataManager.retrieveFile("/games.txt",function(address) {
+      fs.readFile(address,function(err,data) {
+        if ( err ) throw err;
+        var links = data.toString().trim().split("\n").map(item => item.split(","));
+        t.static = `
+  <button class="big" onclick="core.openPage('MainPage','')">Games &larr;</button>
+  <hr>
+  ${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(",")}')">${item[0]}</button>`).join("<br />")}
+  `;
+        render();
+      });
     });
   }
 }

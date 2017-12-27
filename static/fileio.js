@@ -90,11 +90,15 @@ class OfflineModeManager {
 }
 
 function dataManagerInit() {
-  if ( localStorage.getItem("type") == "online" ) dataManager = new OnlineModeManager();
-  else if ( localStorage.getItem("type") == "offline" ) dataManager = new OfflineModeManager();
-  URL = localStorage.getItem("address");
-  if ( ! URL.startsWith("http") ) {
-    URL = "http://" + URL;
+  if ( localStorage.getItem("type") == "online" ) {
+    dataManager = new OnlineModeManager();
+    URL = localStorage.getItem("address");
+    if ( ! URL.startsWith("http") ) {
+      URL = "http://" + URL;
+    }
+    KEY = localStorage.getItem("password");
   }
-  KEY = localStorage.getItem("password");
+  else if ( localStorage.getItem("type") == "offline" ) {
+    dataManager = new OfflineModeManager();
+  }
 }

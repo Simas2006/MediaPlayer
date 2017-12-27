@@ -52,14 +52,14 @@ app.get("/connect",function(request,response) {
 app.use("/retrieve",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = request.url.split("?")[0];
-  if ( ! qs ) {
+  if ( (! qs) || (! tokens[qs]) ) {
     console.log("INVALID_ID " + qs);
     response.send("invalid_id");
   } else {
     fs.readFile(__dirname + "/media" + decodeURIComponent(url),function(err,data) {
       if ( err ) {
         console.log("ERROR " + err.code);
-        response.send("Server error. See log for details.");
+        response.send("server_error");
         return;
       }
       console.log("GET " + url + " " + qs);
@@ -71,14 +71,14 @@ app.use("/retrieve",function(request,response) {
 app.use("/list",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = request.url.split("?")[0];
-  if ( ! qs ) {
+  if ( (! qs) || (! tokens[qs]) ) {
     console.log("INVALID_ID " + qs);
     response.send("invalid_id");
   } else {
     fs.readdir(__dirname + "/media" + url,function(err,files) {
       if ( err ) {
         console.log("ERROR " + err.code);
-        response.send("Server error. See log for details.");
+        response.send("server_error");
         return;
       }
       console.log("LIST " + url + " " + qs);

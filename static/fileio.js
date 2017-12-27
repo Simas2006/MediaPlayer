@@ -14,6 +14,8 @@ class Cryptographer {
     return iv.toString("hex") + ":" + encrypted.toString("hex");
   }
   decrypt(text,key) {
+    if ( text == "invalid_id" ) throw new Error("Failed to authenticate (using: token)");
+    if ( text == "server_error" ) throw new Error("Arbitrary server error");
     key = " ".repeat(32 - key.length) + key;
     text = text.toString().split(":");
     var iv = new Buffer(text.shift(),"hex");

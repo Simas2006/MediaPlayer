@@ -150,6 +150,11 @@ class DrawingCoreAgent {
   }
 }
 
+window.onerror = function(message,url,line) {
+  localStorage.setItem("error",message + " (" + url + ":" + line + ")");
+  location.href = __dirname + "/login/index.html";
+}
+
 window.onload = function() {
   pageDict = {
     MainPage,

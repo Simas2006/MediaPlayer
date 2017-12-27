@@ -56,12 +56,8 @@ app.use("/retrieve",function(request,response) {
     console.log("INVALID_ID " + qs);
     response.send("invalid_id");
   } else {
-    fs.readFile(__dirname + "/media" + decodeURIComponent(url),function(err,data) {
-      if ( err ) {
-        console.log("ERROR " + err.code);
-        response.send("server_error");
-        return;
-      }
+    fs.readFile(__dirname + "/../media" + decodeURIComponent(url),function(err,data) {
+      if ( err ) throw err;
       console.log("GET " + url + " " + qs);
       response.send(cg.encrypt(data,tokens[qs]));
     });
@@ -69,18 +65,15 @@ app.use("/retrieve",function(request,response) {
 });
 
 app.use("/list",function(request,response) {
+  throw new Error("hi");
   var qs = request.url.split("?").slice(1).join("?");
   var url = request.url.split("?")[0];
   if ( (! qs) || (! tokens[qs]) ) {
     console.log("INVALID_ID " + qs);
     response.send("invalid_id");
   } else {
-    fs.readdir(__dirname + "/media" + url,function(err,files) {
-      if ( err ) {
-        console.log("ERROR " + err.code);
-        response.send("server_error");
-        return;
-      }
+    fs.readdir(__dirname + "/../media" + url,function(err,files) {
+      if ( err ) throw err;
       console.log("LIST " + url + " " + qs);
       var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
@@ -89,6 +82,31 @@ app.use("/list",function(request,response) {
   }
 });
 
-app.listen(PORT,function() {
-  console.log("Listening on port " + PORT);
+app.use(function(err,request,response,next) {
+  console.log("ERROR " + err);
+  response.send("server_error");
+  console.log("Saving tokens to file (encrypted)...");
+  fs.writeFile(__dirname + "/tokens.json",cg.encrypt(JSON.stringify(tokens),KEY),function(err) {
+    console.log("Restarting...");
+    process.exit(1);
+  });
+});
+
+function attemptLoadTokens(callback) {
+  fs.readFile(__dirname + "/tokens.json",function(err,data) {
+    if ( err && err.code == "ENOENT" ) {
+      console.log("Failed to load previous tokens.");
+      return;
+    }
+    var text = cg.decrypt(data,KEY);
+    tokens = JSON.parse(text);
+    console.log("Sucessfully loaded tokens: " + text);
+    callback();
+  });
+}
+
+attemptLoadTokens(function() {
+  app.listen(PORT,function() {
+    console.log("Listening on port " + PORT + ".");
+  });
 });

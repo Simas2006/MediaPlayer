@@ -2,8 +2,7 @@ var fs = require("fs");
 var crypto_s = require("crypto");
 var request = require("request");
 var cg,id,token;
-var URL = "http://localhost:8000";
-var KEY = "password";
+var URL,KEY;
 
 class Cryptographer {
   encrypt(text,key) {
@@ -75,16 +74,22 @@ class OnlineModeManager {
 }
 
 class OfflineModeManager {
-  attackToken(callback) { callback(); }
-  retrieveFile(fpath,callback) { callback(__dirname + "/media" + fpath); }
+  attachToken(callback) { callback(); }
+  retrieveFile(fpath,callback) { callback(__dirname + "/../media" + fpath); }
   retrieveList(fpath,callback) {
-    fs.readdir(__dirname + "/media" + fpath,function(err,files) {
+    fs.readdir(__dirname + "/../media" + fpath,function(err,files) {
       if ( err ) throw err;
-      files = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
-      callback(files);
+      var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      list = list.concat(files.filter(item => item.indexOf(".") <= -1));
+      callback(list);
     });
   }
   clearFile(address,callback) { callback(); }
 }
 
-var dataManager = new OnlineModeManager();
+function dataManagerInit() {
+  if ( localStorage.getItem("type") == "online" ) dataManager = new OnlineModeManager();
+  else if ( localStorage.getItem("type") == "offline" ) dataManager = new OfflineModeManager();
+  URL = localStorage.getItem("address");
+  KEY = localStorage.getItem("password");
+}

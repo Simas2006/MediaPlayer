@@ -138,6 +138,7 @@ class DrawingCoreAgent {
     if ( ! mcore.hasSong ) return;
     var x = mcore.audio.currentTime / mcore.audio.duration * canvas.width;
     ctx.fillRect(0,0,x,canvas.height);
+    if ( ! mcore.audio.duration ) return;
     document.getElementById("timespent").innerText = padNumbers(Math.floor(mcore.audio.currentTime / 60)) + ":" + padNumbers(Math.floor((mcore.audio.currentTime % 60)));
     document.getElementById("timeleft").innerText = "-" + padNumbers(Math.floor((mcore.audio.duration - mcore.audio.currentTime) / 60)) + ":" + padNumbers(Math.floor(((mcore.audio.duration - mcore.audio.currentTime) % 60)));
   }

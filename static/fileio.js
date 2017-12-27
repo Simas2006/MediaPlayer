@@ -91,5 +91,8 @@ function dataManagerInit() {
   if ( localStorage.getItem("type") == "online" ) dataManager = new OnlineModeManager();
   else if ( localStorage.getItem("type") == "offline" ) dataManager = new OfflineModeManager();
   URL = localStorage.getItem("address");
+  if ( ! URL.startsWith("http") ) {
+    URL = "http://" + URL;
+  }
   KEY = localStorage.getItem("password");
 }

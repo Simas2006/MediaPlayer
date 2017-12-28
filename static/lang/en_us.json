@@ -26,7 +26,7 @@
     "title": "Games"
   },
   "MusicBar": {
-    "not_playing": "Nnot Pplaying",
-    "queue_button": "R"
+    "not_playing": "Not Playing",
+    "queue_button": "Q"
   }
 }

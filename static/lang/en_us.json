@@ -28,5 +28,21 @@
   "MusicBar": {
     "not_playing": "Not Playing",
     "queue_button": "Q"
+  },
+  "LoginPage": {
+    "title": "MediaPlayer",
+    "online": "Login Online",
+    "offline": "Login Offline",
+    "ip_address": "IP Address",
+    "password": "Password",
+    "login_button": "Login",
+    "error_occured": "An error occurred",
+    "cause_message": "Possible cause",
+    "possible_cause": {
+      "invalid_password": "Invalid password",
+      "refused_connection": "Could not connect to server",
+      "invalid_id": "Server did not recognize computer/Server was reset",
+      "server_error": "An error occurred with the server/Try reconnecting/Check server log for details"
+    }
   }
 }

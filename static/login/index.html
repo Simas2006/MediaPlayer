@@ -7,24 +7,24 @@
   <script src="script.js"></script>
 </head>
 <body>
-  <h1>MediaPlayer</h1>
+  <h1 id="title"></h1>
   <p id="error"></p>
   <form name="login">
     <input type="radio" name="type" value="offline" checked />
-    Login offline
+    <span id="offline_text"></span>
     <br />
     <input type="radio" name="type" value="online" />
-    Login online
+    <span id="online_text"></span>
     <br />
     <div id="creddata">
-      IP Address:
+      <span id="ip_text"></span>:
       <input type="text" name="address" />
       <br />
-      Password:
+      <span id="password_text"></span>:
       <input type="password" name="password" />
     </div>
   </form>
   <br />
-  <button onclick="doLogin()">Login</button>
+  <button onclick="doLogin()" id="login_text"></button>
 </body>
 </html>

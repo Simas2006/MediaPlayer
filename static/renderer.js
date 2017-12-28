@@ -48,6 +48,7 @@ class CoreAgent {
 
 class MusicCoreAgent {
   constructor() {
+    var t = this;
     this.queue = [];
     this.firstTrigger = true;
     this.playing = false;
@@ -55,6 +56,11 @@ class MusicCoreAgent {
     this.volume = 50;
     this.audio = document.getElementById("musicaudio");
     this.audio.addEventListener("ended",this.playNextSong);
+    setTimeout(function() {
+      t.lang = core.retrieveLanguage("musicbar");
+      document.getElementById("queuebutton").innerText = t.lang.queue_button;
+      document.getElementById("musicname").innerText = t.lang.not_playing;
+    },50);
   }
   playNextSong() {
     dataManager.clearFile("music",function() {
@@ -64,7 +70,7 @@ class MusicCoreAgent {
         mcore.firstTrigger = true;
         mcore.audio.currentTime = 0;
         mcore.audio.pause();
-        document.getElementById("musicname").innerText = "Not Playing";
+        document.getElementById("musicname").innerText = mcore.lang.not_playing;
         document.getElementById("playpause").innerHTML = "&#9654;";
         document.getElementById("timespent").innerText = "--:--";
         document.getElementById("timeleft").innerText = "--:--";

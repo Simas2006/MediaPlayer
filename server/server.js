@@ -65,7 +65,6 @@ app.use("/retrieve",function(request,response) {
 });
 
 app.use("/list",function(request,response) {
-  throw new Error("hi");
   var qs = request.url.split("?").slice(1).join("?");
   var url = request.url.split("?")[0];
   if ( (! qs) || (! tokens[qs]) ) {

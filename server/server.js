@@ -95,7 +95,8 @@ app.use(function(err,request,response,next) {
 function attemptLoadTokens(callback) {
   fs.readFile(__dirname + "/tokens.json",function(err,data) {
     if ( err && err.code == "ENOENT" ) {
-      console.log("Failed to load previous tokens.");
+      console.log("Failed to load previous tokens (if there were any).");
+      callback();
       return;
     }
     var text = cg.decrypt(data,KEY);

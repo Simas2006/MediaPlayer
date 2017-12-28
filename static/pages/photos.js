@@ -4,9 +4,10 @@ var RATIO_ACCURACY = 0.05;
 class PhotoAlbumPage {
   constructor(params,render) {
     var t = this;
+    this.lang = core.retrieveLanguage();
     dataManager.retrieveList("/photos",function(files) {
       t.static = `
-<button onclick="core.openPage('MainPage','')" class="big">Albums &larr;</button>
+<button onclick="core.openPage('MainPage','')" class="big">${t.lang.title} &larr;</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"" + "PhotoViewerPage" + "\",\"" + item + ",0\")'>" + item + "</button>").join("<br />")}
 `;
@@ -18,6 +19,7 @@ ${files.map(item => "<button onclick='core.openPage(\"" + "PhotoViewerPage" + "\
 class PhotoViewerPage {
   constructor(params,render) {
     var t = this;
+    this.lang = core.retrieveLanguage();
     this.albumName = params.split(",")[0];
     this.index = parseInt(params.split(",")[1]);
     this.slideshow = false;

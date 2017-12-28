@@ -5,7 +5,12 @@ var core,mcore,dcore;
 
 class CoreAgent {
   constructor() {
+    var t = this;
     this.queueOpen = false;
+    fs.readFile(__dirname + "/lang/en_us.json",function(err,data) {
+      if ( err ) throw err;
+      t.langFile = JSON.parse(data.toString());
+    });
   }
   renderPage() {
     page = new pageDict[activePage](params,function() {
@@ -33,6 +38,11 @@ class CoreAgent {
       document.getElementById("queue").style.display = "none";
       queue = null;
     }
+  }
+  retrieveLanguage(type) {
+    if ( type == "queue" ) return this.langFile["MusicQueuePage"];
+    else if ( type == "musicbar" ) return this.langFile["MusicBar"];
+    return this.langFile[activePage];
   }
 }
 
@@ -151,6 +161,7 @@ class DrawingCoreAgent {
 }
 
 window.onerror = function(message,url,line) {
+  return;
   localStorage.setItem("error",message + " (" + url + ":" + line + ")");
   location.href = __dirname + "/login/index.html";
 }
@@ -168,7 +179,7 @@ window.onload = function() {
   core = new CoreAgent();
   mcore = new MusicCoreAgent();
   dcore = new DrawingCoreAgent();
-  core.renderPage();
+  setTimeout(core.renderPage,50);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
 }

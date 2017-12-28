@@ -2,17 +2,18 @@ var fs = require("fs");
 
 class MainPage {
   constructor(params,render) {
+    var lang = core.retrieveLanguage();
     this.static = `
-<p class="big">MediaPlayer</p>
+<p class="big">${lang.title}</p>
 <hr />
 <br />
-<button class="big" onclick='core.openPage("PhotoAlbumPage","")'>Open Photos</button>
+<button class="big" onclick='core.openPage("PhotoAlbumPage","")'>${lang.photos_page}</button>
 <br />
-<button class="big" onclick='core.openPage("MusicAlbumPage","")'>Open Music</button>
+<button class="big" onclick='core.openPage("MusicAlbumPage","")'>${lang.music_page}</button>
 <br />
-<button class="big" onclick='core.openPage("GamePlayPage","YouTube,www.youtube.com")'>Open YouTube</button>
+<button class="big" onclick='core.openPage("GamePlayPage","YouTube,www.youtube.com")'>${lang.youtube_page}</button>
 <br />
-<button class="big" onclick='core.openPage("GameListPage","")'>Open Games</button>
+<button class="big" onclick='core.openPage("GameListPage","")'>${lang.games_page}</button>
 `;
     render();
   }
@@ -20,6 +21,7 @@ class MainPage {
 
 class MusicQueuePage {
   constructor(params,render) {
+    this.lang = core.retrieveLanguage("queue");
     this.render = function() {
       this.renderAll(render);
     }
@@ -27,7 +29,7 @@ class MusicQueuePage {
   }
   renderAll(render) {
     this.static = `
-<span class="big">Queue</span>
+<span class="big">${this.lang.title}</span>
 <button class="musicbutton box red" onclick="queue.clearQueue()">X</button>
 <button class="musicbutton" onclick="queue.shuffleSongs()">&#128256;</button>
 <hr />
@@ -45,7 +47,7 @@ return `
   <button class="musicbuttonsmall box" onclick="queue.removeItem(${index})">X</button>
   <button class="musicbuttonsmall box" onclick="queue.removeAlbum(${index})">AX</button>
 </p>
-`}).join("") : `<p>Nothing!</p>`}
+`}).join("") : `<p>${this.lang.empty}</p>`}
 `;
     render();
   }

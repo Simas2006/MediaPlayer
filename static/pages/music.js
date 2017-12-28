@@ -3,6 +3,7 @@ var fs = require("fs");
 class MusicAlbumPage {
   constructor(params,render) {
     var t = this;
+    this.lang = core.retrieveLanguage();
     dataManager.retrieveList("/music" + params,function(files) {
       files = files.filter(item => item != ".DS_Store");
       var limits = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
@@ -10,7 +11,7 @@ class MusicAlbumPage {
         core.openPage("MusicListPage",params);
       }
       t.static = `
-<button onclick="core.openPage('MainPage','')" class="big">${params.slice(1) || "Albums"} &larr;</button>
+<button onclick="core.openPage('MainPage','')" class="big">${params.slice(1) || t.lang.title} &larr;</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + params + "/" + item + "\")'>" + item + "</button>").join("<br />")}
 `;
@@ -22,9 +23,10 @@ ${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + par
 class MusicListPage {
   constructor(params,render) {
     var t = this;
+    this.lang = core.retrieveLanguage();
     this.albumName = params.slice(1);
     this.selected = [];
-    this.selectionText = "S"; // is inverted
+    this.selectionText = this.lang.select_all; // inverted from actual case
     dataManager.retrieveList("/music/" + params,function(files) {
       t.files = files.filter(item => item.toLowerCase().endsWith(".mp3") || item.toLowerCase().endsWith(".m4a") || item.toLowerCase().endsWith(".wav"));
       t.render = function() {
@@ -37,8 +39,8 @@ class MusicListPage {
     this.static = `
 <button onclick="core.openPage('MainPage','')" class="big">${this.albumName} &larr;</button>
 <hr />
-<button onclick='page.addToQueue()'>Add to Queue</button>
-<button onclick='page.toggleSelects()'>${this.selectionText}elect All</button>
+<button onclick='page.addToQueue()'>${this.lang.queue_add}</button>
+<button onclick='page.toggleSelects()'>${this.selectionText}</button>
 <hr />
 ${this.files.map(item => {
   var songName = decodeURIComponent(decodeURIComponent(item));
@@ -53,19 +55,19 @@ ${this.files.map(item => {
     var index = this.selected.indexOf(item);
     if ( index > -1 ) {
       this.selected = this.selected.slice(0,index).concat(this.selected.slice(index + 1));
-      this.selectionText = "S";
+      this.selectionText = this.lang.select_all;
     } else {
       this.selected.push(item);
     }
     this.render();
   }
   toggleSelects() {
-    if ( this.selectionText == "Des" ) {
+    if ( this.selectionText == this.lang.deselect_all ) {
       this.selected = [];
-      this.selectionText = "S";
+      this.selectionText = this.lang.select_all;
     } else {
       this.selected = this.files.map(item => escape(item));
-      this.selectionText = "Des";
+      this.selectionText = this.lang.deselect_all;
     }
     this.render();
   }

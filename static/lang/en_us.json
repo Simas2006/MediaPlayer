@@ -1,0 +1,28 @@
+{
+  "MainPage": {
+    "title": "MediaPlayer",
+    "photos_page": "Open Photos",
+    "music_page": "Open Music",
+    "youtube_page": "Open YouTube",
+    "games_page": "Open Games"
+  },
+  "MusicQueuePage": {
+    "title": "Queue",
+    "empty": "Nothing!"
+  },
+  "PhotoAlbumPage": {
+    "title": "Albums"
+  },
+  "PhotoViewerPage": {},
+  "MusicAlbumPage": {
+    "title": "Albums"
+  },
+  "MusicListPage": {
+    "queue_add": "Add to Queue",
+    "select_all": "Select All",
+    "deselect_all": "Deselect All"
+  },
+  "GameListPage": {
+    "title": "Games"
+  }
+}

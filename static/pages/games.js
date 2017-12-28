@@ -3,12 +3,13 @@ var fs = require("fs");
 class GameListPage {
   constructor(params,render) {
     var t = this;
+    this.lang = core.retrieveLanguage();
     dataManager.retrieveFile("/games.txt",function(address) {
       fs.readFile(address,function(err,data) {
         if ( err ) throw err;
         var links = data.toString().trim().split("\n").map(item => item.split(","));
         t.static = `
-  <button class="big" onclick="core.openPage('MainPage','')">Games &larr;</button>
+  <button class="big" onclick="core.openPage('MainPage','')">${t.lang.title} &larr;</button>
   <hr>
   ${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(",")}')">${item[0]}</button>`).join("<br />")}
   `;
@@ -21,6 +22,7 @@ class GameListPage {
 class GamePlayPage {
   constructor(params,render) {
     this.params = params.split(",");
+    this.lang = core.retrieveLanguage();
     if ( mcore.playing ) mcore.togglePlay();
     this.static = `
 <button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>

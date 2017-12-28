@@ -1,0 +1,23 @@
+{
+  "name": "mediaplayer-server",
+  "version": "1.0.0",
+  "description": "MediaPlayer/Server",
+  "main": "server.js",
+  "scripts": {
+    "test": "./startServer.sh",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Simas2006/MediaPlayer.git"
+  },
+  "author": "Simas Juknelis",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Simas2006/MediaPlayer/issues"
+  },
+  "homepage": "https://github.com/Simas2006/MediaPlayer#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}

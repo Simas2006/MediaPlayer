@@ -11,10 +11,17 @@
   "dependencies": {
     "electron": "^1.7.9",
     "exif-js": "^2.3.0",
-    "express": "^4.16.2",
     "request": "^2.83.0"
   },
   "devDependencies": {
     "electron": "^1.7.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Simas2006/MediaPlayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Simas2006/MediaPlayer/issues"
+  },
+  "homepage": "https://github.com/Simas2006/MediaPlayer#readme"
 }

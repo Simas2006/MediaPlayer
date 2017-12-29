@@ -10,6 +10,12 @@ function doLogin() {
   location.href = __dirname + "/../index.html";
 }
 
+window.onkeypress = function(event) {
+  if ( event.keyCode == 13 ) {
+    doLogin();
+  }
+}
+
 window.onload = function() {
   fs.readFile(__dirname + "/../lang/en_us.json",function(err,data) {
     if ( err ) throw err;
@@ -20,6 +26,7 @@ window.onload = function() {
     document.getElementById("ip_text").innerText = lang.ip_address;
     document.getElementById("password_text").innerText = lang.password;
     document.getElementById("login_text").innerText = lang.login_button;
+    document.forms.login.address.value = localStorage.getItem("address");
     if ( localStorage.getItem("error") ) {
       var possibleCause = "";
       if ( localStorage.getItem("error").indexOf("bad decrypt") > -1 ) possibleCause = lang.possible_cause.invalid_password;
@@ -27,7 +34,7 @@ window.onload = function() {
       else if ( localStorage.getItem("error").indexOf("register token") > -1 ) possibleCause = lang.possible_cause.invalid_id;
       else if ( localStorage.getItem("error").indexOf("Arbitrary server") > -1 ) possibleCause = lang.possible_cause.server_error;
       document.getElementById("error").innerText = lang.error_occurred + ":\n" + localStorage.getItem("error") + (possibleCause ? "\n" + lang.cause_message + ": " + possibleCause : "");
-      localStorage.clear();
+      localStorage.removeItem("error");
     }
     setInterval(function() {
       if ( document.forms.login.type.value == "online" ) {

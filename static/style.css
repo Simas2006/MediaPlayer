@@ -32,7 +32,7 @@ table {
 }
 #contentbar {
   vertical-align: top;
-  height: 1000px;
+  height: 2000px;
   background-color: var(--contentbg);
   color: var(--contentfg);
 }

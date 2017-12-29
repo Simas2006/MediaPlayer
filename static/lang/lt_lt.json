@@ -42,6 +42,7 @@
       "invalid_password": "Neteisingas slaptazodis",
       "refused_connection": "Nepavyko prisjungti prie serverio",
       "invalid_id": "Serveris neatpazino komputerio/Serveris perkrautas",
+      "grace_disconnected": "Atjungta del neveiklumo",
       "server_error": "Serverio klaida/Pabandyk vel prisjungti"
     }
   }

@@ -42,6 +42,7 @@
       "invalid_password": "Invalid password",
       "refused_connection": "Could not connect to server",
       "invalid_id": "Server did not recognize computer/Server was reset",
+      "grace_disconnected": "Your session was disconnected for inactivity",
       "server_error": "An error occurred with the server/Try reconnecting/Check server log for details"
     }
   }

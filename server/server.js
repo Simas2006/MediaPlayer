@@ -4,8 +4,10 @@ var express = require("express");
 var app = express();
 var KEY = process.argv[2];
 var PORT = process.argv[3] || 8000;
+var TIMEOUT = 72 * 60 * 60 * 1000;
 var cg;
 var tokens = {};
+var disconnected = [];
 
 if ( ! KEY ) throw "No key supplied";
 
@@ -56,8 +58,15 @@ app.use("/retrieve",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = request.url.split("?")[0];
   if ( (! qs) || (! tokens[qs]) ) {
-    console.log("INVALID_ID " + qs);
-    response.send("invalid_id");
+    if ( disconnected.indexOf(qs) > -1 ) {
+      var index = disconnected.indexOf(qs);
+      disconnected = disconnected.slice(0,index).concat(disconnected.slice(index + 1));
+      console.log("GDISCONNCECT " + qs);
+      response.send("timeout_disconnected");
+    } else {
+      console.log("INVALID_ID " + qs);
+      response.send("invalid_id");
+    }
   } else {
     tokens[qs].timestamp = new Date().getTime();
     fs.readFile(__dirname + "/../media" + decodeURIComponent(url),function(err,data) {
@@ -72,8 +81,15 @@ app.use("/list",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = request.url.split("?")[0];
   if ( (! qs) || (! tokens[qs]) ) {
-    console.log("INVALID_ID " + qs);
-    response.send("invalid_id");
+    if ( disconnected.indexOf(qs) > -1 ) {
+      var index = disconnected.indexOf(qs);
+      disconnected = disconnected.slice(0,index).concat(disconnected.slice(index + 1));
+      console.log("GDISCONNCECT " + qs);
+      response.send("timeout_disconnected");
+    } else {
+      console.log("INVALID_ID " + qs);
+      response.send("invalid_id");
+    }
   } else {
     tokens[qs].timestamp = new Date().getTime();
     fs.readdir(__dirname + "/../media" + url,function(err,files) {
@@ -109,6 +125,18 @@ function attemptLoadTokens(callback) {
     callback();
   });
 }
+
+setInterval(function() {
+  var keys = Object.keys(tokens);
+  for ( var i = 0; i < keys.length; i++ ) {
+    if ( ! tokens[keys[i]] ) continue;
+    if ( new Date().getTime() - tokens[keys[i]].timestamp >= TIMEOUT ) {
+      tokens[keys[i]] = null;
+      disconnected.push(keys[i]);
+      console.log("TIMEOUT " + keys[i]);
+    }
+  }
+},1000);
 
 attemptLoadTokens(function() {
   app.listen(PORT,function() {

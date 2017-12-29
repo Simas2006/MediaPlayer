@@ -17,6 +17,7 @@ function errorHandling(lang) {
     else if ( localStorage.getItem("error").indexOf("ECONNREFUSED") > -1 ) possibleCause = lang.possible_cause.refused_connection;
     else if ( localStorage.getItem("error").indexOf("Failed to authenticate") > -1 ) possibleCause = lang.possible_cause.invalid_id;
     else if ( localStorage.getItem("error").indexOf("Arbitrary server") > -1 ) possibleCause = lang.possible_cause.server_error;
+    else if ( localStorage.getItem("error").indexOf("timeout") > -1 ) possibleCause = lang.possible_cause.grace_disconnected;
     document.getElementById("error").innerText = lang.error_occurred + ":\n" + localStorage.getItem("error") + (possibleCause ? "\n" + lang.cause_message + ": " + possibleCause : "");
     localStorage.removeItem("error");
   }

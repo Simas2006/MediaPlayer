@@ -16,6 +16,7 @@ class Cryptographer {
   decrypt(text,key) {
     if ( text == "invalid_id" ) throw new Error("Failed to authenticate (using: token)");
     if ( text == "server_error" ) throw new Error("Arbitrary server error");
+    if ( text == "timeout_disconnected" ) throw new Error("Gracefully disconnected (timeout)");
     key = " ".repeat(32 - key.length) + key;
     text = text.toString().split(":");
     var iv = new Buffer(text.shift(),"hex");

@@ -7,7 +7,7 @@ class CoreAgent {
   constructor() {
     var t = this;
     this.queueOpen = false;
-    fs.readFile(__dirname + "/lang/en_us.json",function(err,data) {
+    fs.readFile(__dirname + "/lang/" + localStorage.getItem("language"),function(err,data) {
       if ( err ) throw err;
       t.langFile = JSON.parse(data.toString());
     });

@@ -12,3 +12,7 @@ input,button {
 #error {
   color: #f00;
 }
+#language {
+  background-color: #fff;
+  font-size: 80%;
+}

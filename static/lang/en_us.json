@@ -36,7 +36,7 @@
     "ip_address": "IP Address",
     "password": "Password",
     "login_button": "Login",
-    "error_occured": "An error occurred",
+    "error_occurred": "An error occurred",
     "cause_message": "Possible cause",
     "possible_cause": {
       "invalid_password": "Invalid password",

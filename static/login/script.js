@@ -15,7 +15,7 @@ function errorHandling(lang) {
     var possibleCause = "";
     if ( localStorage.getItem("error").indexOf("bad decrypt") > -1 ) possibleCause = lang.possible_cause.invalid_password;
     else if ( localStorage.getItem("error").indexOf("ECONNREFUSED") > -1 ) possibleCause = lang.possible_cause.refused_connection;
-    else if ( localStorage.getItem("error").indexOf("register token") > -1 ) possibleCause = lang.possible_cause.invalid_id;
+    else if ( localStorage.getItem("error").indexOf("Failed to authenticate") > -1 ) possibleCause = lang.possible_cause.invalid_id;
     else if ( localStorage.getItem("error").indexOf("Arbitrary server") > -1 ) possibleCause = lang.possible_cause.server_error;
     document.getElementById("error").innerText = lang.error_occurred + ":\n" + localStorage.getItem("error") + (possibleCause ? "\n" + lang.cause_message + ": " + possibleCause : "");
     localStorage.removeItem("error");

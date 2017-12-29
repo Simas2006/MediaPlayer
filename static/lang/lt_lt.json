@@ -1,0 +1,48 @@
+{
+  "MainPage": {
+    "title": "MediaPlayer",
+    "photos_page": "Atidaryti Nuotraukas",
+    "music_page": "Atidaryti Muzika",
+    "youtube_page": "Atidaryti YouTube",
+    "games_page": "Atidaryti Zaidimus"
+  },
+  "MusicQueuePage": {
+    "title": "Eile",
+    "empty": "Nieko cia nera!"
+  },
+  "PhotoAlbumPage": {
+    "title": "Albumai"
+  },
+  "PhotoViewerPage": {},
+  "MusicAlbumPage": {
+    "title": "Albumai"
+  },
+  "MusicListPage": {
+    "queue_add": "Prideti prie eiles",
+    "select_all": "Pasirink viska",
+    "deselect_all": "Atsaukti visus pasirinkimus"
+  },
+  "GameListPage": {
+    "title": "Zaidimai"
+  },
+  "MusicBar": {
+    "not_playing": "Muzika negroja",
+    "queue_button": "E"
+  },
+  "LoginPage": {
+    "title": "MediaPlayer",
+    "online": "Prisijungti per interneta",
+    "offline": "Prisjungti be interneto",
+    "ip_address": "Adresas",
+    "password": "Slaptazodis",
+    "login_button": "Prisijunk",
+    "error_occurred": "Ivyko klaida",
+    "cause_message": "Imanoma prezastis",
+    "possible_cause": {
+      "invalid_password": "Neteisingas slaptazodis",
+      "refused_connection": "Nepavyko prisjungti prie serverio",
+      "invalid_id": "Serveris neatpazino komputerio/Serveris perkrautas",
+      "server_error": "Serverio klaida/Pabandyk vel prisjungti"
+    }
+  }
+}

@@ -44,7 +44,10 @@ function randomString(length) {
 app.get("/connect",function(request,response) {
   var id = randomString(5);
   var key = randomString(32);
-  tokens[id] = key;
+  tokens[id] = {
+    key: key,
+    timestamp: new Date().getTime()
+  };
   console.log("CONNECT " + id + " " + key);
   response.send(id + " " + cg.encrypt(key,KEY));
 });
@@ -56,10 +59,11 @@ app.use("/retrieve",function(request,response) {
     console.log("INVALID_ID " + qs);
     response.send("invalid_id");
   } else {
+    tokens[qs].timestamp = new Date().getTime();
     fs.readFile(__dirname + "/../media" + decodeURIComponent(url),function(err,data) {
       if ( err ) throw err;
       console.log("GET " + url + " " + qs);
-      response.send(cg.encrypt(data,tokens[qs]));
+      response.send(cg.encrypt(data,tokens[qs].key));
     });
   }
 });
@@ -71,12 +75,13 @@ app.use("/list",function(request,response) {
     console.log("INVALID_ID " + qs);
     response.send("invalid_id");
   } else {
+    tokens[qs].timestamp = new Date().getTime();
     fs.readdir(__dirname + "/../media" + url,function(err,files) {
       if ( err ) throw err;
       console.log("LIST " + url + " " + qs);
       var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
-      response.send(cg.encrypt(list.join(","),tokens[qs]));
+      response.send(cg.encrypt(list.join(","),tokens[qs].key));
     });
   }
 });

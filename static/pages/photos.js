@@ -27,8 +27,7 @@ class PhotoViewerPage {
     setInterval(function() {
       if ( t.slideshow ) t.moveImage(1);
     },5000);
-    fs.readdir(__dirname + "/../media/photos/" + this.albumName,function(err,files) {
-      if ( err ) throw err;
+    dataManager.retrieveList("/photos/" + this.albumName,function(files) {
       t.files = files.filter(item => item.toLowerCase().endsWith(".jpg") || item.toLowerCase().endsWith(".jpeg") || item.toLowerCase().endsWith(".png") || item.toLowerCase().endsWith(".mp4") || item.toLowerCase().endsWith(".mov"));
       t.render = function() {
         t.renderAll(render);
@@ -49,7 +48,7 @@ class PhotoViewerPage {
             EXIF.getData(img,function() {
               var ovalue = EXIF.getTag(this,"Orientation");
               var rvalue = ([0,-1,180,-1,-1,90,-1,270][ovalue - 1] || 0) + t.addedRotation;
-              text = `<img src="${__dirname}/../media/photos/${t.albumName}/${t.files[t.index]}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
+              text = `<img src="${address}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
               mergePath();
             });
           }

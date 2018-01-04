@@ -56,7 +56,7 @@ app.get("/connect",function(request,response) {
 
 app.use("/retrieve",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
-  var url = request.url.split("?")[0];
+  var url = decodeURIComponent(request.url.split("?")[0]);
   if ( (! qs) || (! tokens[qs]) ) {
     if ( disconnected.indexOf(qs) > -1 ) {
       var index = disconnected.indexOf(qs);
@@ -69,7 +69,7 @@ app.use("/retrieve",function(request,response) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    fs.readFile(__dirname + "/../media" + decodeURIComponent(url),function(err,data) {
+    fs.readFile(__dirname + "/../media" + url,function(err,data) {
       if ( err ) throw err;
       console.log("GET " + url + " " + qs);
       response.send(cg.encrypt(data,tokens[qs].key));
@@ -79,7 +79,7 @@ app.use("/retrieve",function(request,response) {
 
 app.use("/list",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
-  var url = request.url.split("?")[0];
+  var url = decodeURIComponent(request.url.split("?")[0]);
   if ( (! qs) || (! tokens[qs]) ) {
     if ( disconnected.indexOf(qs) > -1 ) {
       var index = disconnected.indexOf(qs);
@@ -95,7 +95,7 @@ app.use("/list",function(request,response) {
     fs.readdir(__dirname + "/../media" + url,function(err,files) {
       if ( err ) throw err;
       console.log("LIST " + url + " " + qs);
-      var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
       response.send(cg.encrypt(list.join(","),tokens[qs].key));
     });

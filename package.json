@@ -9,12 +9,14 @@
   "author": "Simas Juknelis",
   "license": "MIT",
   "dependencies": {
-    "electron": "^1.7.9",
     "exif-js": "^2.3.0",
     "request": "^2.83.0"
   },
   "devDependencies": {
     "electron": "^1.7.9"
+  },
+  "scripts": {
+    "build": "(rm -r dist/ || echo No dist folder) && electron-builder --platform=mac . && electron-builder --platform=win ."
   },
   "repository": {
     "type": "git",

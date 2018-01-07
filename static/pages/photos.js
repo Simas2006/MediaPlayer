@@ -24,6 +24,15 @@ class PhotoViewerPage {
     this.index = parseInt(params.split(",")[1]);
     this.slideshow = false;
     this.addedRotation = 0;
+    window.onkeyup = function(event) {
+      if ( event.key == "ArrowRight" ) {
+        page.index++;
+        page.render();
+      } else if ( event.key == "ArrowLeft" ) {
+        page.index--;
+        page.render();
+      }
+    }
     setInterval(function() {
       if ( t.slideshow ) t.moveImage(1);
     },5000);

@@ -97,6 +97,7 @@ class MusicCoreAgent {
     this.queue = this.queue.concat(names);
     if ( this.firstTrigger ) this.playNextSong();
     this.firstTrigger = false;
+    if ( core.queueOpen ) queue.render();
   }
   togglePlay() {
     if ( ! this.hasSong ) return;

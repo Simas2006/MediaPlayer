@@ -20,7 +20,8 @@ class MainPage {
 }
 
 class MusicQueuePage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
+    this.streamer = streamer;
     this.lang = core.retrieveLanguage("queue");
     this.render = function() {
       this.renderAll(render);
@@ -52,33 +53,39 @@ return `
     render();
   }
   removeItem(index) {
+    this.streamer("remove_item_" + index,"mcore");
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
     this.render();
   }
   removeAlbum(index) {
+    this.streamer("remove_album_" + index,"mcore");
     var albumName = mcore.queue[index].split("/");
     albumName = albumName.slice(0,albumName.length - 1);
     mcore.queue = mcore.queue.filter(item => ! item.startsWith(albumName.join("/")));
     this.render();
   }
   moveItem(index,modifier) {
+    this.streamer("move_item_" + index + "_" + modifier,"mcore");
     var item = mcore.queue[index];
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
     mcore.queue.splice(index + modifier,0,item);
     this.render();
   }
   moveToTop(index) {
+    this.streamer("move_top_" + index,"mcore");
     var item = mcore.queue[index];
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
     mcore.queue.splice(0,0,item);
     this.render();
   }
   clearQueue() {
+    this.streamer("clear_queue","mcore");
     mcore.queue = [];
     mcore.playNextSong();
     this.render();
   }
   shuffleSongs() {
+    this.streamer("shuffle_songs","mcore");
     for ( var i = mcore.queue.length - 1; i > 0; i-- ) {
       var j = Math.floor(Math.random() * (i + 1));
       var temp = mcore.queue[i];

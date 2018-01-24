@@ -79,7 +79,11 @@ class MusicCoreAgent {
     },250);
   }
   playNextSong() {
+<<<<<<< HEAD
     core.streamToServer("play_nsong","mcore");
+=======
+    core.streamToServer("play_next_song","mcore");
+>>>>>>> Add scalls for mcore
     dataManager.clearFile("music",function() {
       if ( mcore.queue.length <= 0 ) {
         mcore.hasSong = false;

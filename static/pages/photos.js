@@ -2,7 +2,7 @@ var fs = require("fs");
 var RATIO_ACCURACY = 0.05;
 
 class PhotoAlbumPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     var t = this;
     this.lang = core.retrieveLanguage();
     this.currentDownload = null;
@@ -39,23 +39,19 @@ ${t.currentDownload ? `<p>Downloading pictures from album ${t.currentDownload}..
 }
 
 class PhotoViewerPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     var t = this;
     this.lang = core.retrieveLanguage();
+    this.streamer = streamer;
     this.albumName = params.split(",")[0];
     this.index = parseInt(params.split(",")[1]);
     this.slideshow = false;
     this.addedRotation = 0;
     window.onkeyup = function(event) {
-      if ( event.key == "ArrowRight" ) {
-        page.index++;
-        page.render();
-      } else if ( event.key == "ArrowLeft" ) {
-        page.index--;
-        page.render();
-      }
+      if ( event.key == "ArrowRight" ) this.moveImage(1);
+      else if ( event.key == "ArrowLeft" ) this.moveImage(-1);
     }
-    setInterval(function() {
+    this.interval = setInterval(function() {
       if ( t.slideshow ) t.moveImage(1);
     },5000);
     dataManager.retrieveList("/photos/" + this.albumName,function(files) {
@@ -110,6 +106,7 @@ class PhotoViewerPage {
     }
   }
   moveImage(modifier) {
+    this.streamer("move_image_" + modifier);
     this.index += modifier;
     if ( this.index < 0 ) this.index = this.files.length - 1;
     if ( this.index >= this.files.length ) this.index = 0;
@@ -129,6 +126,7 @@ class PhotoViewerPage {
     throw "wat (ratio calculator)";
   }
   rotate() {
+    this.streamer("rotate");
     this.addedRotation += 90;
     this.render();
   }

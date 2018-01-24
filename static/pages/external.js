@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 class MainPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     var lang = core.retrieveLanguage();
     this.static = `
 <p class="big">${lang.title}</p>

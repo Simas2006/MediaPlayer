@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 class GameListPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     var t = this;
     this.lang = core.retrieveLanguage();
     dataManager.retrieveFile("/games.txt",function(address) {
@@ -20,14 +20,14 @@ class GameListPage {
 }
 
 class GamePlayPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     this.params = params.split(",");
     this.lang = core.retrieveLanguage();
     if ( mcore.playing ) mcore.togglePlay();
     this.static = `
 <button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>
 <hr />
-<webview disablewebsecurity src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
+${dataManager.usingStream() ? `<p>Sorry, streaming game control is not available.</p>` : `<webview disablewebsecurity src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>`}
 `;
     render();
   }

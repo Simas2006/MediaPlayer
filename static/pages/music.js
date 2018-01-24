@@ -1,7 +1,7 @@
 var fs = require("fs");
 
 class MusicAlbumPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     var t = this;
     this.lang = core.retrieveLanguage();
     dataManager.retrieveList("/music" + params,function(files) {
@@ -21,8 +21,9 @@ ${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + par
 }
 
 class MusicListPage {
-  constructor(params,render) {
+  constructor(params,streamer,render) {
     var t = this;
+    this.streamer = streamer;
     this.lang = core.retrieveLanguage();
     this.albumName = params.slice(1);
     this.selected = [];
@@ -59,6 +60,8 @@ ${this.files.map(item => {
     } else {
       this.selected.push(item);
     }
+    item = decodeURIComponent(decodeURIComponent(item));
+    this.streamer("toggle_" + this.files.indexOf(item));
     this.render();
   }
   toggleSelects() {
@@ -69,10 +72,12 @@ ${this.files.map(item => {
       this.selected = this.files.map(item => escape(item));
       this.selectionText = this.lang.deselect_all;
     }
+    this.streamer("toggle_all");
     this.render();
   }
   addToQueue() {
     mcore.addToQueue(page.selected.map(item => params + "/" + escape(item)));
+    this.streamer("queue_add");
     core.openPage("MainPage","");
   }
 }

@@ -13,16 +13,18 @@ class CoreAgent {
     });
   }
   renderPage() {
-    page = new pageDict[activePage](params,function() {
+    page = new pageDict[activePage](params,this.streamToServer,function() {
       setTimeout(function() {
         document.getElementById("content").innerHTML = page.static;
       },10);
     });
   }
   openPage(id,newparams) {
+    clearInterval(page.interval);
     document.getElementById("content").innerHTML = "";
     activePage = id;
     params = newparams;
+    this.streamToServer("change_page");
     this.renderPage();
   }
   toggleQueue() {
@@ -38,6 +40,9 @@ class CoreAgent {
       document.getElementById("queue").style.display = "none";
       queue = null;
     }
+  }
+  streamToServer(data) {
+    console.log("SCALL " + activePage + " " + params + " " + data);
   }
   retrieveLanguage(type) {
     if ( type == "queue" ) return this.langFile["MusicQueuePage"];

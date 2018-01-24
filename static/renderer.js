@@ -28,10 +28,11 @@ class CoreAgent {
     this.renderPage();
   }
   toggleQueue() {
+    this.streamToServer("toggle_queue","mcore");
     this.queueOpen = ! this.queueOpen;
     if ( this.queueOpen ) {
       document.getElementById("queue").style.display = "";
-      queue = new MusicQueuePage("",function() {
+      queue = new MusicQueuePage("",this.streamToServer,function() {
         setTimeout(function() {
           document.getElementById("queue").innerHTML = queue.static;
         },10);
@@ -41,8 +42,8 @@ class CoreAgent {
       queue = null;
     }
   }
-  streamToServer(data) {
-    console.log("SCALL " + activePage + " " + params + " " + data);
+  streamToServer(data,selectPage) {
+    console.log("SCALL " + (selectPage || activePage) + " " + (selectPage ? "" : params) + " " + data);
   }
   retrieveLanguage(type) {
     if ( type == "queue" ) return this.langFile["MusicQueuePage"];
@@ -68,6 +69,7 @@ class MusicCoreAgent {
     },50);
   }
   playNextSong() {
+    core.streamToServer("play_next_song","mcore");
     dataManager.clearFile("music",function() {
       if ( mcore.queue.length <= 0 ) {
         mcore.hasSong = false;
@@ -106,6 +108,7 @@ class MusicCoreAgent {
   }
   togglePlay() {
     if ( ! this.hasSong ) return;
+    core.streamToServer("toggle_play","mcore");
     this.playing = ! this.playing;
     document.getElementById("playpause").innerHTML = this.playing ? "||" : "&#9654;";
     if ( this.playing ) this.audio.play();
@@ -113,11 +116,13 @@ class MusicCoreAgent {
   }
   setTime(nt) {
     if ( ! this.playing ) return;
+    core.streamToServer("set_time_" + nt,"mcore");
     this.audio.currentTime = nt;
   }
   mute() {
     this.volume = 0;
     this.audio.volume = 0;
+    core.streamToServer("set_volume_0","mcore");
     dcore.drawVolumeSlider();
   }
 }
@@ -148,6 +153,7 @@ class DrawingCoreAgent {
     var x = event.clientX - rect.left;
     mcore.volume = Math.round(x / this.width * 100);
     mcore.audio.volume = mcore.volume / 100;
+    core.streamToServer("set_volume_" + mcore.volume,"mcore");
     dcore.drawVolumeSlider();
   }
   drawTimeSlider() {
@@ -169,6 +175,7 @@ class DrawingCoreAgent {
     var rect = this.getBoundingClientRect();
     var x = event.clientX - rect.left;
     mcore.audio.currentTime = x / this.width * mcore.audio.duration;
+    core.streamToServer("set_time_" + Math.round(mcore.audio.currentTime),"mcore");
   }
 }
 

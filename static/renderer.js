@@ -45,6 +45,16 @@ class CoreAgent {
   streamToServer(data,selectPage) {
     console.log("SCALL " + (selectPage || activePage) + " " + (selectPage ? "" : params) + " " + data);
   }
+  recieveClientStream(instruction) {
+    instruction = instruction.split(" ");
+    if ( instruction[2] == "change_page" ) {
+      this.openPage(instruction[0],instruction[1]);
+    } else {
+      var data = instruction[2].split("_");
+      if ( instruction[0] == "mcore" ) mcore.recieveClientStream(data[0] + "_" + data[1],data.slice(2));
+      else page.recieveClientStream(data[0] + "_" + data[1],data.slice(2));
+    }
+  }
   retrieveLanguage(type) {
     if ( type == "queue" ) return this.langFile["MusicQueuePage"];
     else if ( type == "musicbar" ) return this.langFile["MusicBar"];
@@ -69,7 +79,7 @@ class MusicCoreAgent {
     },250);
   }
   playNextSong() {
-    core.streamToServer("play_next_song","mcore");
+    core.streamToServer("play_nsong","mcore");
     dataManager.clearFile("music",function() {
       if ( mcore.queue.length <= 0 ) {
         mcore.hasSong = false;
@@ -124,6 +134,18 @@ class MusicCoreAgent {
     this.audio.volume = 0;
     core.streamToServer("set_volume_0","mcore");
     dcore.drawVolumeSlider();
+  }
+  recieveClientStream(instruction,data) {
+    if ( instruction == "play_nsong" ) this.playNextSong();
+    else if ( instruction == "toggle_play" ) this.togglePlay();
+    else if ( instruction == "toggle_queue" ) core.toggleQueue();
+    else if ( instruction == "set_time" ) this.setTime(data[0]);
+    else if ( instruction == "set_volume" ) {
+      console.log(data);
+      mcore.volume = parseInt(data);
+      mcore.audio.volume = mcore.volume / 100;
+      dcore.drawVolumeSlider();
+    }
   }
 }
 

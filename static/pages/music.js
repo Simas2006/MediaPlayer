@@ -61,7 +61,7 @@ ${this.files.map(item => {
       this.selected.push(item);
     }
     item = decodeURIComponent(decodeURIComponent(item));
-    this.streamer("toggle_" + this.files.indexOf(item));
+    this.streamer("toggle_item_" + this.files.indexOf(item));
     this.render();
   }
   toggleSelects() {
@@ -79,5 +79,10 @@ ${this.files.map(item => {
     mcore.addToQueue(page.selected.map(item => params + "/" + escape(item)));
     this.streamer("queue_add");
     core.openPage("MainPage","");
+  }
+  recieveClientStream(instruction,data) {
+    if ( instruction == "toggle_item" ) this.toggleItem(encodeURIComponent(this.files[parseInt(data[0])]));
+    else if ( instruction == "toggle_all" ) this.toggleSelects();
+    else if ( instruction == "queue_add" ) this.addToQueue();
   }
 }

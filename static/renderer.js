@@ -223,4 +223,14 @@ window.onload = function() {
   setTimeout(core.renderPage,50);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
+  setInterval(function() {
+    fs.readFile(__dirname + "/scall.txt",function(err,data) {
+      if ( err ) throw err;
+      data = data.toString().trim();
+      if ( data != "" ) {
+        core.recieveClientStream(data);
+        fs.writeFile(__dirname + "/scall.txt","",Function.prototype);
+      }
+    });
+  },250);
 }

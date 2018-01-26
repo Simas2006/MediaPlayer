@@ -126,8 +126,12 @@ class PhotoViewerPage {
     throw "wat (ratio calculator)";
   }
   rotate() {
-    this.streamer("rotate");
+    this.streamer("rotate_image");
     this.addedRotation += 90;
     this.render();
+  }
+  recieveClientStream(instruction,data) {
+    if ( instruction == "move_image" ) this.moveImage(parseInt(data[0]));
+    else if ( instruction == "rotate_image" ) this.rotate();
   }
 }

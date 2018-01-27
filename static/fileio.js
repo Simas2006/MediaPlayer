@@ -31,6 +31,9 @@ class Cryptographer {
 cg = new Cryptographer();
 
 class OnlineModeManager {
+  constructor() {
+    this.usingStream = false;
+  }
   attachToken(callback) {
     request(URL + "/connect",function(err,meh,body) {
       if ( err ) throw err;
@@ -74,9 +77,21 @@ class OnlineModeManager {
       }
     });
   }
+  toggleAllowConnections() {
+    fs.readFile(__dirname + "/connection_status.txt",function(err,data) {
+      if ( err ) throw err;
+      data = data.toString() == "yes" ? "no" : "yes";
+      fs.writeFile(__dirname + "/connection_status.txt",data,function(err) {
+        if ( err ) throw err;
+      });
+    });
+  }
 }
 
 class OfflineModeManager {
+  constructor() {
+    this.usingStream = false;
+  }
   attachToken(callback) { callback(); }
   retrieveFile(fpath,callback) { callback(__dirname + "/../media" + fpath); }
   retrieveList(fpath,callback) {

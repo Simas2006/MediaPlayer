@@ -122,7 +122,7 @@ function attemptLoadTokens(callback) {
     var text = cg.decrypt(data,KEY);
     tokens = JSON.parse(text);
     console.log("Sucessfully loaded tokens: " + text);
-    callback();
+    fs.unlink(__dirname + "/tokens.json",callback);
   });
 }
 

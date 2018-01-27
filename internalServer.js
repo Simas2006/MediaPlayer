@@ -44,23 +44,35 @@ function randomString(length) {
 }
 
 app.get("/connect",function(request,response) {
-  userKey = randomString(32);
-  console.log("CONNECT " + userKey);
-  response.send(cg.encrypt(userKey,KEY));
+  fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
+    if ( err ) throw err;
+    if ( data.toString().trim() == "no" || userKey ) {
+      response.send("err_no_allow_connect");
+      return;
+    }
+    userKey = randomString(32);
+    console.log("CONNECT " + userKey);
+    response.send(cg.encrypt(userKey,KEY));
+  });
 });
 
 app.use("/scall",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
-  if ( ! userKey ) response.send("err_no_connect");
-  fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs,userKey),function(err,data) {
-    if ( err ) throw err;
-    console.log("SCALL " + qs);
-    response.send("ok");
+  fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
+    if ( ! userKey || data.toString().trim() == "no" ) {
+      response.send("err_no_allow_connect");
+      userKey = null;
+      return;
+    }
+    fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs,userKey),function(err,data) {
+      if ( err ) throw err;
+      console.log("SCALL " + qs);
+      response.send("ok");
+    });
   });
 });
 
 app.use(function(err,request,response,next) {
-  throw err;
   console.log("ERROR " + err);
   response.send("server_error");
   console.log("Shutting down...");

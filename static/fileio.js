@@ -146,6 +146,15 @@ class OfflineModeManager {
     });
   }
   clearFile(address,callback) { callback(); }
+  toggleAllowConnections() {
+    fs.readFile(__dirname + "/connection_status.txt",function(err,data) {
+      if ( err ) throw err;
+      data = data.toString() == "yes" ? "no" : "yes";
+      fs.writeFile(__dirname + "/connection_status.txt",data,function(err) {
+        if ( err ) throw err;
+      });
+    });
+  }
 }
 
 function dataManagerInit() {

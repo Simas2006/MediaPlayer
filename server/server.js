@@ -1,5 +1,6 @@
 var fs = require("fs");
 var crypto = require("crypto");
+var zipFolder = require("zip-folder");
 var express = require("express");
 var app = express();
 var KEY = process.argv[2];
@@ -98,6 +99,31 @@ app.use("/list",function(request,response) {
       var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
       response.send(cg.encrypt(list.join(","),tokens[qs].key));
+    });
+  }
+});
+
+app.use("/zip",function(request,response) {
+  var qs = request.url.split("?").slice(1).join("?");
+  var url = decodeURIComponent(request.url.split("?")[0]);
+  if ( (! qs) || (! tokens[qs]) ) {
+    if ( disconnected.indexOf(qs) > -1 ) {
+      var index = disconnected.indexOf(qs);
+      disconnected = disconnected.slice(0,index).concat(disconnected.slice(index + 1));
+      console.log("GDISCONNCECT " + qs);
+      response.send("timeout_disconnected");
+    } else {
+      console.log("INVALID_ID " + qs);
+      response.send("invalid_id");
+    }
+  } else {
+    tokens[qs].timestamp = new Date().getTime();
+    zipFolder(__dirname + "/../media" + url,__dirname + "/temp_zip.zip",function(err) {
+      if ( err ) throw err;
+      fs.readFile(__dirname + "/temp_zip.zip",function(err,data) {
+        if ( err ) throw err;
+        response.send(cg.encrypt(data,qs));
+      });
     });
   }
 });

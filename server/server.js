@@ -44,7 +44,7 @@ function randomString(length) {
   return result;
 }
 
-app.get("/connect",function(request,response) {
+app.get("/connect",function(request,response,next) {
   var id = randomString(5);
   var key = randomString(32);
   tokens[id] = {
@@ -55,7 +55,7 @@ app.get("/connect",function(request,response) {
   response.send(id + " " + cg.encrypt(key,KEY));
 });
 
-app.use("/retrieve",function(request,response) {
+app.use("/retrieve",function(request,response,next) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = decodeURIComponent(request.url.split("?")[0]);
   if ( (! qs) || (! tokens[qs]) ) {
@@ -70,15 +70,18 @@ app.use("/retrieve",function(request,response) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    fs.readFile(__dirname + "/../media" + url,function(err,data) {
-      if ( err ) throw err;
+    fs.readFile(__dirname + "//media" + url,function(err,data) {
+      if ( err ) {
+        next(err);
+        return;
+      }
       console.log("GET " + url + " " + qs);
       response.send(cg.encrypt(data,tokens[qs].key));
     });
   }
 });
 
-app.use("/list",function(request,response) {
+app.use("/list",function(request,response,next) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = decodeURIComponent(request.url.split("?")[0]);
   if ( (! qs) || (! tokens[qs]) ) {
@@ -93,8 +96,12 @@ app.use("/list",function(request,response) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    fs.readdir(__dirname + "/../media" + url,function(err,files) {
-      if ( err ) throw err;
+    fs.readdir(__dirname + "//media" + url,function(err,files) {
+      if ( err ) {
+        if ( err.code != "ENOENT" ) next(err);
+        else response.send("err_not_found");
+        return;
+      }
       console.log("LIST " + url + " " + qs);
       var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
@@ -103,7 +110,7 @@ app.use("/list",function(request,response) {
   }
 });
 
-app.use("/zip",function(request,response) {
+app.use("/zip",function(request,response,next) {
   var qs = request.url.split("?").slice(1).join("?");
   var url = decodeURIComponent(request.url.split("?")[0]);
   if ( (! qs) || (! tokens[qs]) ) {
@@ -118,10 +125,16 @@ app.use("/zip",function(request,response) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    zipFolder(__dirname + "/../media" + url,__dirname + "/temp_zip.zip",function(err) {
-      if ( err ) throw err;
+    zipFolder(__dirname + "//media" + url,__dirname + "/temp_zip.zip",function(err) {
+      if ( err ) {
+        next(err);
+        return;
+      }
       fs.readFile(__dirname + "/temp_zip.zip",function(err,data) {
-        if ( err ) throw err;
+        if ( err ) {
+          next(err);
+          return;
+        }
         response.send(cg.encrypt(data,qs));
       });
     });
@@ -131,9 +144,9 @@ app.use("/zip",function(request,response) {
 app.use(function(err,request,response,next) {
   console.log("ERROR " + err);
   response.send("server_error");
-  console.log("Saving tokens to file (encrypted)...");
+  console.log("Saving tokens to file (encrypted).");
   fs.writeFile(__dirname + "/tokens.json",cg.encrypt(JSON.stringify(tokens),KEY),function(err) {
-    console.log("Restarting...");
+    console.log("Restarting.");
     process.exit(1);
   });
 });

@@ -41,19 +41,38 @@ class OnlineModeManager {
     });
   }
   retrieveFile(fpath,callback) {
-    request(URL + "/retrieve" + fpath + "?" + id,function(err,meh,body) {
-      if ( err ) throw err;
-      var fname = __dirname + "/../loadedData/" + fpath.split("/")[fpath.split("/").length - 1];
-      fs.writeFile(fname,cg.decrypt(body,token),function(err) {
+    if ( fs.existsSync(__dirname + "/../media/" + fpath) ) {
+      callback(__dirname + "/../media" + fpath);
+    } else {
+      request(URL + "/retrieve" + fpath + "?" + id,function(err,meh,body) {
         if ( err ) throw err;
-        callback(fname);
+        var fname = __dirname + "/../loadedData/" + fpath.split("/")[fpath.split("/").length - 1];
+        fs.writeFile(fname,cg.decrypt(body,token),function(err) {
+          if ( err ) throw err;
+          callback(fname);
+        });
       });
-    });
+    }
   }
   retrieveList(fpath,callback) {
-    request(URL + "/list" + fpath + "?" + id,function(err,meh,body) {
-      if ( err ) throw err;
-      callback(cg.decrypt(body,token).toString().split(","));
+    fs.readdir(__dirname + "/../media" + fpath,function(err,files) {
+      var offlineList = [];
+      if ( err ) {
+        if ( err.code == "ENOENT" ) merge();
+        else throw err;
+        return;
+      }
+      offlineList = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      offlineList = offlineList.concat(files.filter(item => item.indexOf(".") <= -1));
+      merge();
+      function merge() {
+        request(URL + "/list" + fpath + "?" + id,function(err,meh,body) {
+          if ( err ) throw err;
+          var onlineList = [];
+          if ( ! body.startsWith("err") ) onlineList = cg.decrypt(body,token).toString().split(",");
+          callback(offlineList.concat(onlineList));
+        });
+      }
     });
   }
   clearFile(type,callback) {

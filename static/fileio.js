@@ -2,6 +2,7 @@ var fs = require("fs");
 var crypto_s = require("crypto");
 var request = require("request");
 var cg,id,token;
+var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
 var URL,KEY;
 
 class Cryptographer {
@@ -41,12 +42,12 @@ class OnlineModeManager {
     });
   }
   retrieveFile(fpath,callback) {
-    if ( fs.existsSync(__dirname + "/../media/" + fpath) ) {
-      callback(__dirname + "/../media" + fpath);
+    if ( fs.existsSync(APPDATA + "/LocalMedia/" + fpath) ) {
+      callback(APPDATA + "/LocalMedia/" + fpath);
     } else {
       request(URL + "/retrieve" + fpath + "?" + id,function(err,meh,body) {
         if ( err ) throw err;
-        var fname = __dirname + "/../loadedData/" + fpath.split("/")[fpath.split("/").length - 1];
+        var fname = APPDATA + "/TempData/" + fpath.split("/")[fpath.split("/").length - 1];
         fs.writeFile(fname,cg.decrypt(body,token),function(err) {
           if ( err ) throw err;
           callback(fname);
@@ -55,7 +56,7 @@ class OnlineModeManager {
     }
   }
   retrieveList(fpath,callback) {
-    fs.readdir(__dirname + "/../media" + fpath,function(err,files) {
+    fs.readdir(APPDATA + "/LocalMedia/" + fpath,function(err,files) {
       var offlineList = [];
       if ( err ) {
         if ( err.code == "ENOENT" ) merge();
@@ -76,7 +77,7 @@ class OnlineModeManager {
     });
   }
   clearFile(type,callback) {
-    fs.readdir(__dirname + "/../loadedData",function(err,files) {
+    fs.readdir(APPDATA + "/TempData",function(err,files) {
       if ( err ) throw err;
       var extensions = {
         "photo": ["png","jpg",".gif"],
@@ -86,7 +87,7 @@ class OnlineModeManager {
       if ( files.length < 1 ) {
         callback();
       } else {
-        fs.unlink(__dirname + "/../loadedData/" + files[0],function(err) {
+        fs.unlink(APPDATA + "/TempData/" + files[0],function(err) {
           if ( err ) throw err;
           callback();
         });
@@ -97,9 +98,9 @@ class OnlineModeManager {
 
 class OfflineModeManager {
   attachToken(callback) { callback(); }
-  retrieveFile(fpath,callback) { callback(__dirname + "/../media" + fpath); }
+  retrieveFile(fpath,callback) { callback(APPDATA + "/LocalMedia/" + fpath); }
   retrieveList(fpath,callback) {
-    fs.readdir(__dirname + "/../media" + fpath,function(err,files) {
+    fs.readdir(APPDATA + "/LocalMedia/" + fpath,function(err,files) {
       if ( err ) throw err;
       var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));

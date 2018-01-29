@@ -1,3 +1,4 @@
 node_modules/
 server/media/
 server/tokens.json
+server/temp_zip.zip

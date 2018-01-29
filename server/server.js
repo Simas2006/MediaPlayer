@@ -135,7 +135,7 @@ app.use("/zip",function(request,response,next) {
           next(err);
           return;
         }
-        response.send(cg.encrypt(data,qs));
+        response.send(cg.encrypt(data,tokens[qs].key));
       });
     });
   }

@@ -5,13 +5,35 @@ class PhotoAlbumPage {
   constructor(params,render) {
     var t = this;
     this.lang = core.retrieveLanguage();
-    dataManager.retrieveList("/photos",function(files) {
+    this.currentDownload = null;
+    this.render = function() {
+      this.renderAll(render);
+    }
+    this.render();
+  }
+  renderAll(render) {
+    var t = this;
+    dataManager.retrieveList("/photos",function(files,ftypes) {
       t.static = `
 <button onclick="core.openPage('MainPage','')" class="big">${t.lang.title} &larr;</button>
 <hr />
-${files.map(item => "<button onclick='core.openPage(\"" + "PhotoViewerPage" + "\",\"" + item + ",0\")'>" + item + "</button>").join("<br />")}
+${files.map((item,index) => `
+<button onclick='core.openPage("PhotoViewerPage","${item},0")' class="inline">${item}</button>
+${ftypes[index] ? `<button onclick='page.downloadAlbum("${item}")' class="inline">&#10515;</button>` : ""}
+`).join("<br />")}
+<br />
+${t.currentDownload ? `<p>Downloading pictures from album ${t.currentDownload}...</p>` : ""}
 `;
       render();
+    });
+  }
+  downloadAlbum(album) {
+    var t = this;
+    this.currentDownload = album;
+    this.render();
+    dataManager.downloadAlbum(album,function() {
+      t.currentDownload = null;
+      t.render();
     });
   }
 }

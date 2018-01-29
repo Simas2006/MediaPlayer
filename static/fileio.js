@@ -1,6 +1,7 @@
 var fs = require("fs");
 var crypto_s = require("crypto");
 var request = require("request");
+var extract = require("extract-zip");
 var cg,id,token;
 var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
 var URL,KEY;
@@ -43,11 +44,7 @@ class OnlineModeManager {
   }
   retrieveFile(fpath,callback) {
     if ( fs.existsSync(APPDATA + "/LocalMedia/" + fpath) ) {
-<<<<<<< HEAD
       callback(APPDATA + "/LocalMedia/" + fpath);
-=======
-      callback(__dirname + "/../media" + fpath);
->>>>>>> 55c1c3f6f098d0cbe78139eec01ebc11ca0a1c4d
     } else {
       request(URL + "/retrieve" + fpath + "?" + id,function(err,meh,body) {
         if ( err ) throw err;
@@ -75,7 +72,9 @@ class OnlineModeManager {
           if ( err ) throw err;
           var onlineList = [];
           if ( ! body.startsWith("err") ) onlineList = cg.decrypt(body,token).toString().split(",");
-          callback(offlineList.concat(onlineList));
+          onlineList = onlineList.filter(item => offlineList.indexOf(item) <= -1);
+          var list = offlineList.concat(onlineList).sort();
+          callback(list,list.map(item => onlineList.indexOf(item) > -1));
         });
       }
     });
@@ -98,6 +97,21 @@ class OnlineModeManager {
       }
     });
   }
+  downloadAlbum(album,callback) {
+    request(URL + "/zip/photos/" + album + "?" + id,function(err,meh,body) {
+      if ( err ) throw err;
+      fs.writeFile(APPDATA + "/TempData/" + album + ".zip",cg.decrypt(body,token),function(err) {
+        if ( err ) throw err;
+        fs.mkdir(APPDATA + "/LocalMedia/photos/" + album,function(err) {
+          if ( err ) throw err;
+          extract(APPDATA + "/TempData/" + album + ".zip",{dir:APPDATA + "/LocalMedia/photos/" + album},function(err) {
+            if ( err ) throw err;
+            callback();
+          });
+        });
+      });
+    });
+  }
 }
 
 class OfflineModeManager {
@@ -108,7 +122,7 @@ class OfflineModeManager {
       if ( err ) throw err;
       var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
-      callback(list);
+      callback(list,"0".repeat(list.length).split("").map(item => false));
     });
   }
   clearFile(address,callback) { callback(); }

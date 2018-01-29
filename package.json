@@ -4,19 +4,17 @@
   "description": "MediaPlayer",
   "main": "main.js",
   "scripts": {
-    "test": "electron ."
+    "build": "(rm -r dist/ || echo No dist folder) && electron-builder --platform=mac . && electron-builder --platform=win ."
   },
   "author": "Simas Juknelis",
   "license": "MIT",
   "dependencies": {
     "exif-js": "^2.3.0",
+    "extract-zip": "^1.6.6",
     "request": "^2.83.0"
   },
   "devDependencies": {
     "electron": "^1.7.9"
-  },
-  "scripts": {
-    "build": "(rm -r dist/ || echo No dist folder) && electron-builder --platform=mac . && electron-builder --platform=win ."
   },
   "repository": {
     "type": "git",

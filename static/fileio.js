@@ -43,7 +43,11 @@ class OnlineModeManager {
   }
   retrieveFile(fpath,callback) {
     if ( fs.existsSync(APPDATA + "/LocalMedia/" + fpath) ) {
+<<<<<<< HEAD
       callback(APPDATA + "/LocalMedia/" + fpath);
+=======
+      callback(__dirname + "/../media" + fpath);
+>>>>>>> 55c1c3f6f098d0cbe78139eec01ebc11ca0a1c4d
     } else {
       request(URL + "/retrieve" + fpath + "?" + id,function(err,meh,body) {
         if ( err ) throw err;

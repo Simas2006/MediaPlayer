@@ -60,7 +60,7 @@ class MusicCoreAgent {
       t.lang = core.retrieveLanguage("musicbar");
       document.getElementById("queuebutton").innerText = t.lang.queue_button;
       document.getElementById("musicname").innerText = t.lang.not_playing;
-    },50);
+    },250);
   }
   playNextSong() {
     dataManager.clearFile("music",function() {
@@ -186,7 +186,7 @@ window.onload = function() {
   core = new CoreAgent();
   mcore = new MusicCoreAgent();
   dcore = new DrawingCoreAgent();
-  setTimeout(core.renderPage,50);
+  setTimeout(core.renderPage,250);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
 }

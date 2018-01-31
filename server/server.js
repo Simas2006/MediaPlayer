@@ -6,9 +6,11 @@ var app = express();
 var KEY = process.argv[2];
 var PORT = process.argv[3] || 8000;
 var TIMEOUT = 72 * 60 * 60 * 1000;
+var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
 var cg;
 var tokens = {};
 var disconnected = [];
+var standardLoc = __dirname + "/media";
 
 if ( ! KEY ) throw "No key supplied";
 
@@ -70,7 +72,7 @@ app.use("/retrieve",function(request,response,next) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    fs.readFile(__dirname + "//media" + url,function(err,data) {
+    fs.readFile(standardLoc + url,function(err,data) {
       if ( err ) {
         next(err);
         return;
@@ -96,7 +98,7 @@ app.use("/list",function(request,response,next) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    fs.readdir(__dirname + "//media" + url,function(err,files) {
+    fs.readdir(standardLoc + url,function(err,files) {
       if ( err ) {
         if ( err.code != "ENOENT" ) next(err);
         else response.send("err_not_found");
@@ -125,7 +127,7 @@ app.use("/zip",function(request,response,next) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    zipFolder(__dirname + "//media" + url,__dirname + "/temp_zip.zip",function(err) {
+    zipFolder(standardLoc + url,__dirname + "/temp_zip.zip",function(err) {
       if ( err ) {
         next(err);
         return;
@@ -178,7 +180,8 @@ setInterval(function() {
 },1000);
 
 attemptLoadTokens(function() {
+  if ( fs.existsSync(APPDATA + "/LocalData") ) standardLoc = APPDATA + "/LocalMedia";
   app.listen(PORT,function() {
-    console.log("Listening on port " + PORT + ".");
+    console.log("Listening on port " + PORT + ", using media folder " + standardLoc);
   });
 });

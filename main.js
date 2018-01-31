@@ -1,10 +1,11 @@
-const {app,BrowserWindow,globalShortcut,Menu} = require("electron");
-const fs = require("fs");
-let win
+var {app,BrowserWindow,globalShortcut,Menu} = require("electron");
+var fs = require("fs");
+var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
+var window;
 
 function createWindow() {
   var size = require("electron").screen.getPrimaryDisplay().size;
-  win = new BrowserWindow({
+  window = new BrowserWindow({
     width: size.width,
     height: size.height,
     "nodeIntegration": "iframe",
@@ -12,15 +13,26 @@ function createWindow() {
       webSecurity: false
     }
   });
-  win.setMenu(null);
-  win.loadURL("file://" + __dirname + "/static/login/index.html");
-  //win.webContents.openDevTools();
-  win.on("closed", function() {
-    win = null;
+  window.setMenu(null);
+  window.loadURL("file://" + __dirname + "/static/login/index.html");
+  //window.webContents.openDevTools();
+  window.on("closed", function() {
+    window = null;
   });
 }
 
-app.on("ready",createWindow);
+app.on("ready",function() {
+  if ( ! fs.existsSync(APPDATA + "/LocalMedia") ) {
+    fs.mkdirSync(APPDATA + "/LocalMedia");
+    fs.mkdirSync(APPDATA + "/LocalMedia/photos");
+    fs.mkdirSync(APPDATA + "/LocalMedia/music");
+    fs.writeFileSync(APPDATA + "/LocalMedia/games.txt");
+    fs.mkdirSync(APPDATA + "/TempData");
+    createWindow();
+  } else {
+    createWindow();
+  }
+});
 
 app.on("window-all-closed",function() {
   if ( process.platform == "darwin" ) {
@@ -29,7 +41,7 @@ app.on("window-all-closed",function() {
 });
 
 app.on("activate",function() {
-  if ( ! win ) {
+  if ( ! window ) {
     createWindow();
   }
 });

@@ -100,6 +100,11 @@ class OnlineModeManager {
   downloadAlbum(album,callback) {
     request(URL + "/zip/photos/" + album + "?" + id,function(err,meh,body) {
       if ( err ) throw err;
+      if ( body == "err_too_large" ) {
+        alert("This album is too large and cannot be downloaded.");
+        callback(true);
+        return;
+      }
       fs.writeFile(APPDATA + "/TempData/" + album + ".zip",cg.decrypt(body,token),function(err) {
         if ( err ) throw err;
         fs.mkdir(APPDATA + "/LocalMedia/photos/" + album,function(err) {

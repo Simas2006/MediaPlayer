@@ -127,19 +127,24 @@ app.use("/zip",function(request,response,next) {
     }
   } else {
     tokens[qs].timestamp = new Date().getTime();
-    zipFolder(standardLoc + url,__dirname + "/temp_zip.zip",function(err) {
-      if ( err ) {
-        next(err);
-        return;
-      }
-      fs.readFile(__dirname + "/temp_zip.zip",function(err,data) {
+    var size = fs.statSync(standardLoc + url).size / 1e9;
+    if ( size >= 1 ) {
+      response.send("err_too_large");
+    } else {
+      zipFolder(standardLoc + url,__dirname + "/temp_zip.zip",function(err) {
         if ( err ) {
           next(err);
           return;
         }
-        response.send(cg.encrypt(data,tokens[qs].key));
+        fs.readFile(__dirname + "/temp_zip.zip",function(err,data) {
+          if ( err ) {
+            next(err);
+            return;
+          }
+          response.send(cg.encrypt(data,tokens[qs].key));
+        });
       });
-    });
+    }
   }
 });
 
@@ -180,7 +185,7 @@ setInterval(function() {
 },1000);
 
 attemptLoadTokens(function() {
-  if ( fs.existsSync(APPDATA + "/LocalData") ) standardLoc = APPDATA + "/LocalMedia";
+  if ( fs.existsSync(APPDATA + "/LocalMedia") ) standardLoc = APPDATA + "/LocalMedia";
   app.listen(PORT,function() {
     console.log("Listening on port " + PORT + ", using media folder " + standardLoc);
   });

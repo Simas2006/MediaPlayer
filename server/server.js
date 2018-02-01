@@ -141,6 +141,7 @@ app.use("/zip",function(request,response,next) {
             next(err);
             return;
           }
+          console.log("ZIP " + url + " " + qs);
           response.send(cg.encrypt(data,tokens[qs].key));
         });
       });

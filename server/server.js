@@ -186,7 +186,7 @@ setInterval(function() {
 },1000);
 
 attemptLoadTokens(function() {
-  if ( fs.existsSync(APPDATA + "/LocalMedia") ) standardLoc = APPDATA + "/LocalMedia";
+  if ( fs.existsSync(APPDATA + "/LocalMedia") ) //standardLoc = APPDATA + "/LocalMedia";
   app.listen(PORT,function() {
     console.log("Listening on port " + PORT + ", using media folder " + standardLoc);
   });

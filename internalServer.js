@@ -44,6 +44,7 @@ function randomString(length) {
 }
 
 app.get("/connect",function(request,response) {
+<<<<<<< HEAD
   fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
     if ( err ) throw err;
     if ( data.toString().trim() == "no" || userKey ) {
@@ -69,6 +70,21 @@ app.use("/scall",function(request,response) {
       console.log("SCALL " + qs);
       response.send("ok");
     });
+=======
+  var id = randomString(5);
+  var key = randomString(32);
+  tokens[id] = key;
+  console.log("CONNECT " + id + " " + key);
+  response.send(id + " " + cg.encrypt(key,KEY));
+});
+
+app.use("/scall",function(request,response) {
+  var qs = request.url.split("?").slice(1).join("?").split(",");
+  fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs[1],tokens[qs[0]]),function(err,data) {
+    if ( err ) throw err;
+    console.log("SCALL " + qs[0] + " " + qs[1]);
+    response.send("ok");
+>>>>>>> Merge branch master onto stream-develop
   });
 });
 

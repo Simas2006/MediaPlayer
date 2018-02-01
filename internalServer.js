@@ -6,7 +6,7 @@ var KEY = process.argv[2];
 var PORT = process.argv[3] || 8000;
 var TIMEOUT = 72 * 60 * 60 * 1000;
 var cg;
-var tokens = {};
+var userKey;
 var disconnected = [];
 
 if ( ! KEY ) throw "No key supplied";
@@ -44,19 +44,31 @@ function randomString(length) {
 }
 
 app.get("/connect",function(request,response) {
-  var id = randomString(5);
-  var key = randomString(32);
-  tokens[id] = key;
-  console.log("CONNECT " + id + " " + key);
-  response.send(id + " " + cg.encrypt(key,KEY));
+  fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
+    if ( err ) throw err;
+    if ( data.toString().trim() == "no" || userKey ) {
+      response.send("err_no_allow_connect");
+      return;
+    }
+    userKey = randomString(32);
+    console.log("CONNECT " + userKey);
+    response.send(cg.encrypt(userKey,KEY));
+  });
 });
 
 app.use("/scall",function(request,response) {
-  var qs = request.url.split("?").slice(1).join("?").split(",");
-  fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs[1],tokens[qs[0]]),function(err,data) {
-    if ( err ) throw err;
-    console.log("SCALL " + qs[0] + " " + qs[1]);
-    response.send("ok");
+  var qs = request.url.split("?").slice(1).join("?");
+  fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
+    if ( ! userKey || data.toString().trim() == "no" ) {
+      response.send("err_no_allow_connect");
+      userKey = null;
+      return;
+    }
+    fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs,userKey),function(err,data) {
+      if ( err ) throw err;
+      console.log("SCALL " + qs);
+      response.send("ok");
+    });
   });
 });
 

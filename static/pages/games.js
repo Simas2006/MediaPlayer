@@ -27,7 +27,7 @@ class GamePlayPage {
     this.static = `
 <button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>
 <hr />
-${dataManager.usingStream() ? `<p>Sorry, streaming game control is not available.</p>` : `<webview disablewebsecurity src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>`}
+${dataManager.usingStream ? `<p>Sorry, streaming game control is not available.</p>` : `<webview disablewebsecurity src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>`}
 `;
     render();
   }

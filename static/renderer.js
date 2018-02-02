@@ -86,6 +86,7 @@ class MusicCoreAgent {
         mcore.playing = false;
         mcore.firstTrigger = true;
         mcore.audio.currentTime = 0;
+        mcore.audio.src = "about:blank";
         mcore.audio.pause();
         document.getElementById("musicname").innerText = mcore.lang.not_playing;
         document.getElementById("playpause").innerHTML = "&#9654;";

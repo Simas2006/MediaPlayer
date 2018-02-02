@@ -2,9 +2,9 @@ var fs = require("fs");
 var crypto_s = require("crypto");
 var request = require("request");
 var extract = require("extract-zip");
-var cg,id,token;
+var cg;
 var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
-var URL,KEY,SURL,SKEY;
+var SSTATE = 0;
 
 class Cryptographer {
   encrypt(text,key) {
@@ -16,7 +16,7 @@ class Cryptographer {
     return iv.toString("hex") + ":" + encrypted.toString("hex");
   }
   decrypt(text,key) {
-    if ( text == "invalid_id" ) throw new Error("Failed to authenticate (using: token)");
+    if ( text == "invalt.loginData.id_t.loginData.id" ) throw new Error("Failed to authenticate (using: token)");
     if ( text == "server_error" ) throw new Error("Arbitrary server error");
     if ( text == "timeout_disconnected" ) throw new Error("Gracefully disconnected (timeout)");
     key = " ".repeat(32 - key.length) + key;
@@ -35,24 +35,36 @@ cg = new Cryptographer();
 class OnlineModeManager {
   constructor() {
     this.usingStream = false;
+    this.loginData = {
+      url: null,
+      key: null,
+      id: null,
+      token: null,
+      streaming: {
+        url: null,
+        token: null
+      }
+    };
   }
   attachToken(callback) {
-    request(URL + "/connect",function(err,meh,body) {
+    var t = this;
+    request(t.loginData.url + "/connect",function(err,meh,body) {
       if ( err ) throw err;
       var data = body.split(" ");
-      data[1] = cg.decrypt(data[1],KEY).toString();
-      [id,token] = data;
+      data[1] = cg.decrypt(data[1],t.loginData.key).toString();
+      [t.loginData.id,t.loginData.token] = data;
       callback();
     });
   }
   retrieveFile(fpath,callback) {
+    var t = this;
     if ( fs.existsSync(APPDATA + "/LocalMedia/" + fpath) ) {
       callback(APPDATA + "/LocalMedia/" + fpath);
     } else {
-      request(URL + "/retrieve" + fpath + "?" + id,function(err,meh,body) {
+      request(t.loginData.url + "/retrieve" + fpath + "?" + t.loginData.id,function(err,meh,body) {
         if ( err ) throw err;
         var fname = APPDATA + "/TempData/" + fpath.split("/")[fpath.split("/").length - 1];
-        fs.writeFile(fname,cg.decrypt(body,token),function(err) {
+        fs.writeFile(fname,cg.decrypt(body,t.loginData.token),function(err) {
           if ( err ) throw err;
           callback(fname);
         });
@@ -60,6 +72,7 @@ class OnlineModeManager {
     }
   }
   retrieveList(fpath,callback) {
+    var t = this;
     fs.readdir(APPDATA + "/LocalMedia/" + fpath,function(err,files) {
       var offlineList = [];
       if ( err ) {
@@ -71,10 +84,10 @@ class OnlineModeManager {
       offlineList = offlineList.concat(files.filter(item => item.indexOf(".") <= -1));
       merge();
       function merge() {
-        request(URL + "/list" + fpath + "?" + id,function(err,meh,body) {
+        request(t.loginData.url + "/list" + fpath + "?" + t.loginData.id,function(err,meh,body) {
           if ( err ) throw err;
           var onlineList = [];
-          if ( ! body.startsWith("err") ) onlineList = cg.decrypt(body,token).toString().split(",");
+          if ( ! body.startsWith("err") ) onlineList = cg.decrypt(body,t.loginData.token).toString().split(",");
           onlineList = onlineList.filter(item => offlineList.indexOf(item) <= -1);
           var list = offlineList.concat(onlineList).sort();
           callback(list,list.map(item => onlineList.indexOf(item) > -1));
@@ -101,14 +114,15 @@ class OnlineModeManager {
     });
   }
   downloadAlbum(album,callback) {
-    request(URL + "/zip/photos/" + album + "?" + id,function(err,meh,body) {
+    var t = this;
+    request(t.loginData.url + "/zip/photos/" + album + "?" + t.loginData.id,function(err,meh,body) {
       if ( err ) throw err;
       if ( body == "err_too_large" ) {
         alert("This album is too large and cannot be downloaded.");
         callback(true);
         return;
       }
-      fs.writeFile(APPDATA + "/TempData/" + album + ".zip",cg.decrypt(body,token),function(err) {
+      fs.writeFile(APPDATA + "/TempData/" + album + ".zip",cg.decrypt(body,t.loginData.token),function(err) {
         if ( err ) throw err;
         fs.mkdir(APPDATA + "/LocalMedia/photos/" + album,function(err) {
           if ( err ) throw err;
@@ -121,7 +135,8 @@ class OnlineModeManager {
     });
   }
   streamToServer(message,callback) {
-    request(SURL + "/scall?" + cg.encrypt(message,SKEY),function(err,meh,body) {
+    console.log(message);
+    request(this.loginData.streaming.url + "/scall?" + cg.encrypt(message,this.loginData.streaming.key),function(err,meh,body) {
       if ( err ) throw err;
       callback();
     });
@@ -131,6 +146,9 @@ class OnlineModeManager {
 class OfflineModeManager {
   constructor() {
     this.usingStream = false;
+    this.streamData = {
+      url: "http://localhost:8001"
+    }
   }
   attachToken(callback) { callback(); }
   retrieveFile(fpath,callback) { callback(APPDATA + "/LocalMedia/" + fpath); }
@@ -157,11 +175,11 @@ class OfflineModeManager {
 function dataManagerInit() {
   if ( localStorage.getItem("type") == "online" ) {
     dataManager = new OnlineModeManager();
-    URL = localStorage.getItem("address");
-    if ( ! URL.startsWith("http") ) {
-      URL = "http://" + URL;
+    dataManager.loginData.url = localStorage.getItem("address");
+    if ( ! dataManager.loginData.url.startsWith("http") ) {
+      dataManager.loginData.url = "http://" + dataManager.loginData.url;
     }
-    KEY = localStorage.getItem("password");
+    dataManager.loginData.key = localStorage.getItem("password");
   }
   else if ( localStorage.getItem("type") == "offline" ) {
     dataManager = new OfflineModeManager();

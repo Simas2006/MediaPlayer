@@ -64,12 +64,19 @@ app.use("/scall",function(request,response) {
       userKey = null;
       return;
     }
-    fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs,userKey),function(err,data) {
+    qs = cg.decrypt(qs,userKey);
+    fs.writeFile(__dirname + "/static/scall.txt",qs,function(err,data) {
       if ( err ) throw err;
       console.log("SCALL " + qs);
       response.send("ok");
     });
   });
+});
+
+app.get("/end",function(request,response) {
+  userKey = null;
+  console.log("END");
+  response.send("ok");
 });
 
 app.use(function(err,request,response,next) {

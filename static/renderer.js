@@ -224,6 +224,7 @@ window.onload = function() {
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
   if ( localStorage.getItem("type") == "offline" ) {
+    dataManager.changeStreamState(0);
     setInterval(function() {
       fs.readFile(__dirname + "/scall.txt",function(err,data) {
         if ( err ) throw err;

@@ -179,6 +179,25 @@ class OfflineModeManager {
       });
     });
   }
+  changeStreamState(customValue) {
+    if ( ! customValue ) {
+      if ( SSTATE == 2 ) {
+        request(this.streamData.url + "/end",function(err,meh,body) {
+          if ( err ) throw err;
+        });
+      } else {
+        this.toggleAllowConnections();
+      }
+    }
+    SSTATE = customValue != undefined ? customValue : (SSTATE < 1 ? 1 : SSTATE - 1);
+    var text = [
+      ["Not currently listening for connections","Start listening"],
+      ["Now listening for connections","Stop listening"],
+      ["Person currently controlling computer","End session"]
+    ];
+    document.getElementById("stream_text").innerText = text[SSTATE][0];
+    document.getElementById("stream_link").innerText = text[SSTATE][1];
+  }
 }
 
 function dataManagerInit() {

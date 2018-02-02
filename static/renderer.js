@@ -43,7 +43,7 @@ class CoreAgent {
     }
   }
   streamToServer(data,selectPage) {
-    console.log("SCALL " + (selectPage || activePage) + " " + (selectPage ? "" : params) + " " + data);
+    if ( dataManager.usingStream ) dataManager.streamToServer((selectPage || activePage) + " " + (selectPage ? "" : params) + " " + data,Function.prototype);
   }
   recieveClientStream(instruction) {
     instruction = instruction.split(" ");
@@ -141,7 +141,6 @@ class MusicCoreAgent {
     else if ( instruction == "toggle_queue" ) core.toggleQueue();
     else if ( instruction == "set_time" ) this.setTime(data[0]);
     else if ( instruction == "set_volume" ) {
-      console.log(data);
       mcore.volume = parseInt(data);
       mcore.audio.volume = mcore.volume / 100;
       dcore.drawVolumeSlider();
@@ -202,7 +201,7 @@ class DrawingCoreAgent {
 }
 
 window.onerror = function(message,url,line) {
-  //return;
+  return;
   localStorage.setItem("error",message + " (" + url + ":" + line + ")");
   location.href = __dirname + "/login/index.html";
 }
@@ -223,14 +222,16 @@ window.onload = function() {
   setTimeout(core.renderPage,250);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
-  setInterval(function() {
-    fs.readFile(__dirname + "/scall.txt",function(err,data) {
-      if ( err ) throw err;
-      data = data.toString().trim();
-      if ( data != "" ) {
-        core.recieveClientStream(data);
-        fs.writeFile(__dirname + "/scall.txt","",Function.prototype);
-      }
-    });
-  },250);
+  if ( localStorage.getItem("type") == "offline" ) {
+    setInterval(function() {
+      fs.readFile(__dirname + "/scall.txt",function(err,data) {
+        if ( err ) throw err;
+        data = data.toString().trim();
+        if ( data != "" ) {
+          core.recieveClientStream(data);
+          fs.writeFile(__dirname + "/scall.txt","",Function.prototype);
+        }
+      });
+    },250);
+  }
 }

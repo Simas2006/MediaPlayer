@@ -4,7 +4,7 @@ var request = require("request");
 var extract = require("extract-zip");
 var cg,id,token;
 var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
-var URL,KEY;
+var URL,KEY,SURL,SKEY;
 
 class Cryptographer {
   encrypt(text,key) {
@@ -118,6 +118,12 @@ class OnlineModeManager {
           });
         });
       });
+    });
+  }
+  streamToServer(message,callback) {
+    request(SURL + "/scall?" + cg.encrypt(message,SKEY),function(err,meh,body) {
+      if ( err ) throw err;
+      callback();
     });
   }
 }

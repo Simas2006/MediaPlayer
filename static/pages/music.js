@@ -11,7 +11,7 @@ class MusicAlbumPage {
         core.openPage("MusicListPage",params);
       }
       t.static = `
-<button onclick="core.openPage('MainPage','')" class="big">${params.slice(1) || t.lang.title} &larr;</button>
+<button onclick="core.openPage('${params == "" ? "MainPage" : "MusicAlbumPage"}','${params == "" ? "" : params.split("/").slice(0,-1).join("/")}')" class="big">${params.slice(1) || t.lang.title} &larr;</button>
 <hr />
 ${files.map(item => "<button onclick='core.openPage(\"MusicAlbumPage\",\"" + params + "/" + item + "\")'>" + item + "</button>").join("<br />")}
 `;

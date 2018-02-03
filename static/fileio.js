@@ -150,6 +150,24 @@ class OnlineModeManager {
       callback();
     });
   }
+  changeStreamState(customValue) {
+    if ( customValue === undefined ) {
+      if ( SSTATE == 0 ) {
+        open(__dirname + "/connect/index.html","_blank");
+      } else {
+        request(this.loginData.streaming.url + "/end",function(err,meh,body) {
+          if ( err ) throw err;
+        });
+      }
+    }
+    SSTATE = customValue != undefined ? customValue : (SSTATE < 1 ? 1 : SSTATE - 1);
+    var text = [
+      ["Not currently controlling device","Start streaming"],
+      ["Currently controlling device","Stop streaming"]
+    ];
+    document.getElementById("stream_text").innerText = text[SSTATE][0];
+    document.getElementById("stream_link").innerText = text[SSTATE][1];
+  }
 }
 
 class OfflineModeManager {
@@ -179,7 +197,7 @@ class OfflineModeManager {
     });
   }
   changeStreamState(customValue) {
-    if ( ! customValue ) {
+    if ( customValue === undefined ) {
       if ( SSTATE == 2 ) {
         request(this.streamData.url + "/end",function(err,meh,body) {
           if ( err ) throw err;

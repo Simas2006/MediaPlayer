@@ -223,8 +223,8 @@ window.onload = function() {
   setTimeout(core.renderPage,250);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
+  dataManager.changeStreamState(0);
   if ( localStorage.getItem("type") == "offline" ) {
-    dataManager.changeStreamState(0);
     setInterval(function() {
       fs.readFile(__dirname + "/../interactions.json",function(err,data) {
         if ( err ) throw err;

@@ -44,10 +44,10 @@ function randomString(length) {
 }
 
 app.get("/connect",function(request,response) {
-<<<<<<< HEAD
-  fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
+  fs.readFile(__dirname + "/interactions.json",function(err,data) {
     if ( err ) throw err;
-    if ( data.toString().trim() == "no" || userKey ) {
+    data = JSON.parse(data.toString());
+    if ( ! data.allowConnections || userKey ) {
       response.send("err_no_allow_connect");
       return;
     }
@@ -59,17 +59,19 @@ app.get("/connect",function(request,response) {
 
 app.use("/scall",function(request,response) {
   var qs = request.url.split("?").slice(1).join("?");
-  fs.readFile(__dirname + "/static/connection_status.txt",function(err,data) {
-    if ( ! userKey || data.toString().trim() == "no" ) {
+  fs.readFile(__dirname + "/interactions.json",function(err,data) {
+    if ( err ) throw err;
+    data = JSON.parse(data.toString());
+    if ( ! userKey || ! data.allowConnections ) {
       response.send("err_no_allow_connect");
       userKey = null;
       return;
     }
     qs = cg.decrypt(qs,userKey);
-    fs.writeFile(__dirname + "/static/scall.txt",qs,function(err,data) {
-      if ( err ) throw err;
-      console.log("SCALL " + qs);
+    data.scall = qs;
+    fs.writeFile(__dirname + "/interactions.json",JSON.stringify(data,null,2),function(err) {
       response.send("ok");
+      console.log("SCALL " + qs);
     });
 =======
   var id = randomString(5);
@@ -90,9 +92,16 @@ app.use("/scall",function(request,response) {
 });
 
 app.get("/end",function(request,response) {
-  userKey = null;
-  console.log("END");
-  response.send("ok");
+  fs.readFile(__dirname + "/interactions.json",function(err,data) {
+    if ( err ) throw err;
+    data = JSON.parse(data.toString());
+    data.sessionEnd = true;
+    fs.writeFile(__dirname + "/interactions.json",JSON.stringify(data,null,2),function(err) {
+      userKey = null;
+      console.log("END");
+      response.send("ok");
+    });
+  });
 });
 
 app.use(function(err,request,response,next) {

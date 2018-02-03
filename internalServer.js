@@ -51,9 +51,12 @@ app.get("/connect",function(request,response) {
       response.send("err_no_allow_connect");
       return;
     }
-    userKey = randomString(32);
-    console.log("CONNECT " + userKey);
-    response.send(cg.encrypt(userKey,KEY));
+    data.sessionStart = true;
+    fs.writeFile(__dirname + "/interactions.json",JSON.stringify(data,null,2),function(err) {
+      userKey = randomString(32);
+      console.log("CONNECT " + userKey);
+      response.send(cg.encrypt(userKey,KEY));
+    });
   });
 });
 

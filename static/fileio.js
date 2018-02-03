@@ -162,12 +162,11 @@ class OfflineModeManager {
   }
   clearFile(address,callback) { callback(); }
   toggleAllowConnections() {
-    fs.readFile(__dirname + "/connection_status.txt",function(err,data) {
+    fs.readFile(__dirname + "/../interactions.json",function(err,data) {
       if ( err ) throw err;
-      data = data.toString() == "yes" ? "no" : "yes";
-      fs.writeFile(__dirname + "/connection_status.txt",data,function(err) {
-        if ( err ) throw err;
-      });
+      data = JSON.parse(data.toString());
+      data.allowConnections = ! data.allowConnections;
+      fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
     });
   }
   changeStreamState(customValue) {

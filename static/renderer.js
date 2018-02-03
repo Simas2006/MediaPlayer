@@ -226,12 +226,13 @@ window.onload = function() {
   if ( localStorage.getItem("type") == "offline" ) {
     dataManager.changeStreamState(0);
     setInterval(function() {
-      fs.readFile(__dirname + "/scall.txt",function(err,data) {
+      fs.readFile(__dirname + "/../interactions.json",function(err,data) {
         if ( err ) throw err;
-        data = data.toString().trim();
-        if ( data != "" ) {
-          core.recieveClientStream(data);
-          fs.writeFile(__dirname + "/scall.txt","",Function.prototype);
+        data = JSON.parse(data.toString());
+        if ( data.scall ) {
+          core.recieveClientStream(data.scall);
+          data.scall = null
+          fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
         }
       });
     },250);

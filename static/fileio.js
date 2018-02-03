@@ -16,7 +16,7 @@ class Cryptographer {
     return iv.toString("hex") + ":" + encrypted.toString("hex");
   }
   decrypt(text,key) {
-    if ( text == "invalt.loginData.id_t.loginData.id" ) throw new Error("Failed to authenticate (using: token)");
+    if ( text == "invalid_id" ) throw new Error("Failed to authenticate (using: token)");
     if ( text == "server_error" ) throw new Error("Arbitrary server error");
     if ( text == "timeout_disconnected" ) throw new Error("Gracefully disconnected (timeout)");
     key = " ".repeat(32 - key.length) + key;
@@ -35,6 +35,7 @@ cg = new Cryptographer();
 class OnlineModeManager {
   constructor() {
     this.usingStream = false;
+    this.streamGetInterval = null;
     this.loginData = {
       url: null,
       key: null,
@@ -142,9 +143,23 @@ class OnlineModeManager {
     });
   }
   changeStreamState(customValue) {
+    var t = this;
     if ( customValue === undefined ) {
       if ( SSTATE == 0 ) {
-        open(__dirname + "/connect/index.html","_blank");
+        open(__dirname + "/connect/index.html","Connect to streaming");
+        localStorage.removeItem("stream_url");
+        localStorage.removeItem("stream_key");
+        this.streamGetInterval = setInterval(function() {
+          if ( localStorage.getItem("stream_url") ) {
+            t.usingStream = true;
+            t.loginData.streaming.url = localStorage.getItem("stream_url");
+            request(t.loginData.streaming.url + "/connect",function(err,meh,body) {
+              if ( err ) throw err;
+              t.loginData.streaming.token = cg.decrypt(body.toString(),localStorage.getItem("stream_key")).toString();
+              clearInterval(t.streamGetInterval);
+            });
+          }
+        },250);
       } else {
         request(this.loginData.streaming.url + "/end",function(err,meh,body) {
           if ( err ) throw err;

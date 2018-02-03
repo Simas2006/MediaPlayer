@@ -84,7 +84,7 @@ class OnlineModeManager {
       if ( err ) throw err;
       var extensions = {
         "photo": ["png","jpg",".gif"],
-        "music": ["mp4","m4a",".wav"]
+        "music": ["mp3","m4a",".wav"]
       };
       files = files.filter(item => extensions[type].map(j => item.toLowerCase().endsWith(j) ? "1" : "0").indexOf("1") > -1);
       if ( files.length < 1 ) {
@@ -125,7 +125,7 @@ class OfflineModeManager {
   retrieveList(fpath,callback) {
     fs.readdir(APPDATA + "/LocalMedia/" + fpath,function(err,files) {
       if ( err ) throw err;
-      var list = files.filter(item => ["png","jpg","gif","mp4","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
+      var list = files.filter(item => ["png","jpg","gif","mp3","m4a","wav"].map(j => item.endsWith(j) ? "1" : "0").indexOf("1") > -1);
       list = list.concat(files.filter(item => item.indexOf(".") <= -1));
       callback(list,"0".repeat(list.length).split("").map(item => false));
     });

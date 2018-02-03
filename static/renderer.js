@@ -229,10 +229,17 @@ window.onload = function() {
       fs.readFile(__dirname + "/../interactions.json",function(err,data) {
         if ( err ) throw err;
         data = JSON.parse(data.toString());
+        var rewrite = _ => fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
         if ( data.scall ) {
           core.recieveClientStream(data.scall);
-          data.scall = null
-          fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
+          data.scall = null;
+          rewrite();
+        }
+        if ( data.sessionEnd || data.sessionStart ) {
+          dataManager.changeStreamState(data.sessionEnd ? 1 : 2);
+          data.sessionEnd = false;
+          data.sessionStart = false;
+          rewrite();
         }
       });
     },250);

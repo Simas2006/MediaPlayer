@@ -5,6 +5,7 @@ class PhotoAlbumPage {
   constructor(params,streamer,render) {
     var t = this;
     this.lang = core.retrieveLanguage();
+    this.streamer = streamer;
     this.currentDownload = null;
     this.render = function() {
       this.renderAll(render);
@@ -29,12 +30,16 @@ ${t.currentDownload ? `<p>Downloading pictures from album ${t.currentDownload}..
   }
   downloadAlbum(album) {
     var t = this;
+    this.streamer("download_album_" + album);
     this.currentDownload = album;
     this.render();
     dataManager.downloadAlbum(album,function() {
       t.currentDownload = null;
       t.render();
     });
+  }
+  recieveClientStream(instruction,data) {
+    if ( instruction == "download_album" ) downloadAlbum(data[0]);
   }
 }
 

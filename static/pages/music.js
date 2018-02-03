@@ -37,7 +37,7 @@ class MusicListPage {
   }
   renderAll(render) {
     this.static = `
-<button onclick="core.openPage('MainPage','')" class="big">${this.albumName} &larr;</button>
+<button onclick="core.openPage('MusicAlbumPage','${params.split("/").slice(0,-1).join("/")}')" class="big">${this.albumName} &larr;</button>
 <hr />
 <button onclick='page.addToQueue()'>${this.lang.queue_add}</button>
 <button onclick='page.toggleSelects()'>${this.selectionText}</button>

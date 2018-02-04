@@ -31,6 +31,7 @@
   },
   "LoginPage": {
     "title": "MediaPlayer",
+    "stream_title": "Connect to Streaming",
     "online": "Login Online",
     "offline": "Login Offline",
     "ip_address": "IP Address",

@@ -145,28 +145,44 @@ class OnlineModeManager {
     });
   }
   streamToServer(message,callback) {
+    var t = this;
     console.log(message);
     request(this.loginData.streaming.url + "/scall?" + cg.encrypt(message,this.loginData.streaming.token),function(err,meh,body) {
       if ( err ) throw err;
-      callback();
+      if ( body == "err_no_allow_connect" ) {
+        alert("You were disconnected by the streaming device.")
+        t.changeStreamState(0);
+      }
+      else callback();
     });
   }
   changeStreamState(customValue) {
     var t = this;
     if ( customValue === undefined ) {
       if ( SSTATE == 0 ) {
-        open(__dirname + "/connect/index.html","Connect to streaming");
+        var connectWindow = open(__dirname + "/connect/index.html","Connect to streaming");
         localStorage.removeItem("stream_url");
         localStorage.removeItem("stream_key");
+        localStorage.removeItem("stream_close");
         this.streamGetInterval = setInterval(function() {
           if ( localStorage.getItem("stream_url") ) {
+            connectWindow.close();
             t.usingStream = true;
             t.loginData.streaming.url = localStorage.getItem("stream_url");
             request(t.loginData.streaming.url + "/connect",function(err,meh,body) {
               if ( err ) throw err;
-              t.loginData.streaming.token = cg.decrypt(body.toString(),localStorage.getItem("stream_key")).toString();
+              if ( body == "err_no_allow_connect" ) {
+                alert("Someone is already connected to the streaming device. Try disconnecting the user on the device.");
+                t.changeStreamState(0);
+              } else {
+                t.loginData.streaming.token = cg.decrypt(body.toString(),localStorage.getItem("stream_key")).toString();
+              }
               clearInterval(t.streamGetInterval);
             });
+          } else if ( connectWindow.closed || localStorage.getItem("stream_close") ) {
+            connectWindow.close();
+            clearInterval(t.streamGetInterval);
+            t.changeStreamState(0);
           }
         },250);
       } else {

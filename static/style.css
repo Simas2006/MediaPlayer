@@ -1,4 +1,4 @@
-body {
+body,input {
   --musicbarbg: rgb(30,59,107);
   --musicbarfg: rgb(255,255,0);
   --contentbg: rgb(136,173,175);
@@ -20,6 +20,10 @@ p,button {
 }
 webview {
   height: 50%;
+}
+input {
+  width: 100%;
+  background-color: rgb(255,255,255);
 }
 table {
   width: 100%;

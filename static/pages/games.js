@@ -9,10 +9,10 @@ class GameListPage {
         if ( err ) throw err;
         var links = data.toString().trim().split("\n").map(item => item.split(","));
         t.static = `
-  <button class="big" onclick="core.openPage('MainPage','')">${t.lang.title} &larr;</button>
-  <hr>
-  ${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(",")}')">${item[0]}</button>`).join("<br />")}
-  `;
+<button class="big" onclick="core.openPage('MainPage','')">${t.lang.title} &larr;</button>
+<hr>
+${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(",")}')">${item[0]}</button>`).join("<br />")}
+`;
         render();
       });
     });
@@ -21,18 +21,34 @@ class GameListPage {
 
 class GamePlayPage {
   constructor(params,render) {
+    var t = this;
     this.params = params.split(",");
     this.lang = core.retrieveLanguage();
+    this.focused = false;
     if ( mcore.playing ) mcore.togglePlay();
+    this.interval = setInterval(function() {
+      if ( ! t.focused ) document.getElementById("url").value = document.getElementById("webpage").src;
+    },250);
+    setTimeout(function() {
+      document.getElementById("url").onkeyup = page.onKeyPress;
+    },500);
     this.static = `
 <button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>
 <hr />
-<webview disablewebsecurity src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
+<input type="text" id="url" onfocus="page.focused = true;" onblur="page.focused = false;" />
+<webview disablewebsecurity id="webpage" src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
 `;
     render();
   }
   exitPage() {
     if ( ! mcore.playing ) mcore.togglePlay();
+    clearInterval(this.interval);
     core.openPage(this.params[1] == "www.youtube.com" ? "MainPage" : "GameListPage","");
+  }
+  onKeyPress(event) {
+    if ( event.keyCode == 13 ) {
+      document.getElementById("webpage").src = document.getElementById("url").value;
+      this.focused = false;
+    }
   }
 }

@@ -76,7 +76,6 @@ app.use("/scall",function(request,response) {
       response.send("ok");
       console.log("SCALL " + qs);
     });
-=======
   var id = randomString(5);
   var key = randomString(32);
   tokens[id] = key;
@@ -90,7 +89,6 @@ app.use("/scall",function(request,response) {
     if ( err ) throw err;
     console.log("SCALL " + qs[0] + " " + qs[1]);
     response.send("ok");
->>>>>>> Merge branch master onto stream-develop
   });
 });
 

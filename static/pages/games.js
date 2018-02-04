@@ -22,22 +22,23 @@ ${links.map(item => `<button onclick="core.openPage('GamePlayPage','${item.join(
 
 class GamePlayPage {
   constructor(params,streamer,render) {
+    var t = this;
     this.params = params.split(",");
     this.lang = core.retrieveLanguage();
     this.focused = false;
     if ( this.params[1].startsWith("www") ) this.params[1] = "http://" + this.params[1];
     if ( ! this.params[1].startsWith("http") ) this.params[1] = "http://www." + this.params[1];
     if ( mcore.playing ) mcore.togglePlay();
-    this.interval = setInterval(function() {
-      if ( ! t.focused ) document.getElementById("url").value = document.getElementById("webpage").src;
-    },250);
     setTimeout(function() {
       document.getElementById("url").onkeyup = page.onKeyPress;
+      t.interval = setInterval(function() {
+        if ( ! t.focused ) document.getElementById("url").value = document.getElementById("webpage").src;
+      },250);
     },500);
     this.static = `
 <button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>
 <hr />
-${dataManager.usingStream() ? `<p>Sorry, streaming game control is not available.</p>` : `
+${dataManager.usingStream ? `<p>Sorry, streaming game control is not available.</p>` : `
 <input type="text" id="url" onfocus="page.focused = true;" onblur="page.focused = false;" />
 <webview disablewebsecurity id="webpage" src="${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
 `}

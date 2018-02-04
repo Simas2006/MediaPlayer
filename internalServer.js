@@ -76,19 +76,6 @@ app.use("/scall",function(request,response) {
       response.send("ok");
       console.log("SCALL " + qs);
     });
-  var id = randomString(5);
-  var key = randomString(32);
-  tokens[id] = key;
-  console.log("CONNECT " + id + " " + key);
-  response.send(id + " " + cg.encrypt(key,KEY));
-});
-
-app.use("/scall",function(request,response) {
-  var qs = request.url.split("?").slice(1).join("?").split(",");
-  fs.writeFile(__dirname + "/static/scall.txt",cg.decrypt(qs[1],tokens[qs[0]]),function(err,data) {
-    if ( err ) throw err;
-    console.log("SCALL " + qs[0] + " " + qs[1]);
-    response.send("ok");
   });
 });
 

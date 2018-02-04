@@ -8,6 +8,7 @@ class GameListPage {
       fs.readFile(address,function(err,data) {
         if ( err ) throw err;
         var links = data.toString().trim().split("\n").map(item => item.split(","));
+        links.push(["Other","http://www.google.com"]);
         t.static = `
 <button class="big" onclick="core.openPage('MainPage','')">${t.lang.title} &larr;</button>
 <hr>
@@ -25,6 +26,8 @@ class GamePlayPage {
     this.params = params.split(",");
     this.lang = core.retrieveLanguage();
     this.focused = false;
+    if ( this.params[1].startsWith("www") ) this.params[1] = "http://" + this.params[1];
+    if ( ! this.params[1].startsWith("http") ) this.params[1] = "http://www." + this.params[1];
     if ( mcore.playing ) mcore.togglePlay();
     this.interval = setInterval(function() {
       if ( ! t.focused ) document.getElementById("url").value = document.getElementById("webpage").src;
@@ -36,7 +39,7 @@ class GamePlayPage {
 <button class="big" onclick="page.exitPage()">${this.params[0]} &larr;</button>
 <hr />
 <input type="text" id="url" onfocus="page.focused = true;" onblur="page.focused = false;" />
-<webview disablewebsecurity id="webpage" src="http://${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
+<webview disablewebsecurity id="webpage" src="${this.params[1]}" style="display:inline-flex; width:${window.screen.width}px; height:${window.screen.height}px"></webview>
 `;
     render();
   }
@@ -47,7 +50,10 @@ class GamePlayPage {
   }
   onKeyPress(event) {
     if ( event.keyCode == 13 ) {
-      document.getElementById("webpage").src = document.getElementById("url").value;
+      var url = document.getElementById("url").value;
+      if ( url.startsWith("www") ) url = "http://" + url;
+      if ( ! url.startsWith("http") ) url = "http://www." + url;
+      document.getElementById("webpage").src = url;
       this.focused = false;
     }
   }

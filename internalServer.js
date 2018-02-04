@@ -8,6 +8,7 @@ var TIMEOUT = 72 * 60 * 60 * 1000;
 var cg;
 var userKey;
 var disconnected = [];
+var queue = [];
 
 if ( ! KEY ) throw "No key supplied";
 
@@ -70,12 +71,7 @@ app.use("/scall",function(request,response) {
       userKey = null;
       return;
     }
-    qs = cg.decrypt(qs,userKey);
-    data.scall = qs;
-    fs.writeFile(__dirname + "/interactions.json",JSON.stringify(data,null,2),function(err) {
-      response.send("ok");
-      console.log("SCALL " + qs);
-    });
+    queue.push(cg.decrypt(qs,userKey));
   });
 });
 
@@ -101,4 +97,18 @@ app.use(function(err,request,response,next) {
 
 app.listen(PORT,function() {
   console.log("Listening on port " + PORT + ".");
+  setInterval(function() {
+    fs.readFile(__dirname + "/interactions.json",function(err,data) {
+      if ( err ) throw err;
+      data = JSON.parse(data.toString());
+      if ( ! data.scall && queue.length > 0 ) {
+        data.scall = queue[0];
+        console.log(queue[0]);
+        queue.shift();
+        fs.writeFile(__dirname + "/interactions.json",JSON.stringify(data,null,2),function(err) {
+          if ( err ) throw err;
+        });
+      }
+    });
+  },100);
 });

@@ -146,7 +146,7 @@ class OnlineModeManager {
   }
   streamToServer(message,callback) {
     console.log(message);
-    request(this.loginData.streaming.url + "/scall?" + cg.encrypt(message,this.loginData.streaming.key),function(err,meh,body) {
+    request(this.loginData.streaming.url + "/scall?" + cg.encrypt(message,this.loginData.streaming.token),function(err,meh,body) {
       if ( err ) throw err;
       callback();
     });

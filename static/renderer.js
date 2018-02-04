@@ -68,17 +68,26 @@ class MusicCoreAgent {
     this.queue = [];
     this.firstTrigger = true;
     this.playing = false;
+    this.waiting = false;
     this.hasSong = false;
     this.volume = 50;
     this.audio = document.getElementById("musicaudio");
-    this.audio.addEventListener("ended",this.playNextSong);
+    this.audio.addEventListener("ended",function() {
+      mcore.waiting = false;
+      mcore.playNextSong();
+    });
     setTimeout(function() {
       t.lang = core.retrieveLanguage("musicbar");
       document.getElementById("queuebutton").innerText = t.lang.queue_button;
       document.getElementById("musicname").innerText = t.lang.not_playing;
-    },250);
+    },500);
   }
   playNextSong() {
+    if ( this.waiting ) return;
+    this.waiting = true;
+    setTimeout(function() {
+      this.waiting = false
+    },2000);
     core.streamToServer("play_nsong","mcore");
     dataManager.clearFile("music",function() {
       if ( mcore.queue.length <= 0 ) {
@@ -86,7 +95,6 @@ class MusicCoreAgent {
         mcore.playing = false;
         mcore.firstTrigger = true;
         mcore.audio.currentTime = 0;
-        mcore.audio.src = "about:blank";
         mcore.audio.pause();
         document.getElementById("musicname").innerText = mcore.lang.not_playing;
         document.getElementById("playpause").innerHTML = "&#9654;";
@@ -99,14 +107,17 @@ class MusicCoreAgent {
       if ( ! isNaN(parseInt(visualSongName.slice(0,2))) ) visualSongName = visualSongName.slice(3);
       var source = document.getElementById("musicsrc");
       dataManager.retrieveFile("/music/" + songName,function(address) {
-        source.src = encodeURI(address);
+        source.src = address;
         mcore.audio.load();
-        mcore.audio.play();
-        document.getElementById("musicname").innerText = visualSongName;
-        mcore.queue = mcore.queue.slice(1,mcore.audio.length);
-        mcore.playing = true;
-        document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
-        if ( core.queueOpen ) queue.render();
+        setTimeout(function() {
+          mcore.audio.play();
+          mcore.waiting = false;
+          document.getElementById("musicname").innerText = visualSongName;
+          mcore.queue = mcore.queue.slice(1,mcore.audio.length);
+          mcore.playing = true;
+          document.getElementById("playpause").innerHTML = mcore.playing ? "||" : "&#9654;";
+          if ( core.queueOpen ) queue.render();
+        },1000);
       });
     });
   }
@@ -220,7 +231,7 @@ window.onload = function() {
   core = new CoreAgent();
   mcore = new MusicCoreAgent();
   dcore = new DrawingCoreAgent();
-  setTimeout(core.renderPage,250);
+  setTimeout(core.renderPage,500);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
   dataManager.changeStreamState(0);

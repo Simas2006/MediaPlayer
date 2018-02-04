@@ -17,6 +17,7 @@ class MainPage {
 `;
     render();
   }
+  recieveClientStream() {}
 }
 
 class MusicQueuePage {

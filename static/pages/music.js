@@ -76,8 +76,8 @@ ${this.files.map(item => {
     this.render();
   }
   addToQueue() {
-    mcore.addToQueue(page.selected.map(item => params + "/" + escape(item)));
     this.streamer("queue_add");
+    mcore.addToQueue(page.selected.map(item => params + "/" + escape(item)));
     core.openPage("MainPage","");
   }
   recieveClientStream(instruction,data) {

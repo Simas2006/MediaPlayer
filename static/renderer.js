@@ -164,12 +164,12 @@ class MusicCoreAgent {
       if ( queue ) queue.render();
     }
     else if ( instruction == "shuffle_queue" ) {
-      for ( var i = mcore.queue.length - 1; i > 0; i-- ) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = mcore.queue[i];
-        mcore.queue[i] = mcore.queue[j];
-        mcore.queue[j] = temp;
+      data = data.map(item => parseInt(item));
+      var result = [];
+      for ( var i = 0; i < data.length; i++ ) {
+        result.push(mcore.queue[data[i]]);
       }
+      mcore.queue = result;
       if ( queue ) queue.render();
     }
     else if ( instruction == "move_item" ) {

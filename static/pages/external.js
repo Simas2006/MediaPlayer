@@ -86,13 +86,15 @@ return `
     this.render();
   }
   shuffleSongs() {
-    this.streamer("shuffle_songs","mcore");
+    var previous = mcore.queue.map(item => item); // does nothing
     for ( var i = mcore.queue.length - 1; i > 0; i-- ) {
       var j = Math.floor(Math.random() * (i + 1));
       var temp = mcore.queue[i];
       mcore.queue[i] = mcore.queue[j];
       mcore.queue[j] = temp;
     }
+    var indexes = mcore.queue.map(item => previous.indexOf(item));
+    this.streamer("shuffle_songs_" + indexes.join("_"),"mcore");
     this.render();
   }
 }

@@ -272,6 +272,12 @@ window.onload = function() {
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
   dataManager.changeStreamState(0);
+  fs.readFile(__dirname + "/../interactions.json",function(err,data) {
+    if ( err ) throw err;
+    data = JSON.parse(data.toString());
+    data.allowConnections = false;
+    fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
+  });
   if ( localStorage.getItem("type") == "offline" ) {
     setInterval(function() {
       fs.readFile(__dirname + "/../interactions.json",function(err,data) {

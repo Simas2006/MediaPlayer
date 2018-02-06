@@ -20,7 +20,7 @@ class CoreAgent {
     });
   }
   openPage(id,newparams) {
-    clearInterval(page.interval);
+    clearInterval(page.interval || 0);
     document.getElementById("content").innerHTML = "";
     activePage = id;
     params = newparams;
@@ -76,6 +76,9 @@ class MusicCoreAgent {
       mcore.waiting = false;
       mcore.playNextSong();
     });
+    setInterval(function() {
+      mcore.waiting = false;
+    },2000);
     setTimeout(function() {
       t.lang = core.retrieveLanguage("musicbar");
       document.getElementById("queuebutton").innerText = t.lang.queue_button;
@@ -85,9 +88,6 @@ class MusicCoreAgent {
   playNextSong() {
     if ( this.waiting ) return;
     this.waiting = true;
-    setTimeout(function() {
-      this.waiting = false
-    },2000);
     core.streamToServer("play_nsong","mcore");
     dataManager.clearFile("music",function() {
       if ( mcore.queue.length <= 0 ) {
@@ -148,6 +148,7 @@ class MusicCoreAgent {
     dcore.drawVolumeSlider();
   }
   recieveClientStream(instruction,data) {
+    data[0] = parseInt(data[0]) || data[0];
     if ( instruction == "play_nsong" ) this.playNextSong();
     else if ( instruction == "toggle_play" ) this.togglePlay();
     else if ( instruction == "toggle_queue" ) core.toggleQueue();
@@ -156,6 +157,42 @@ class MusicCoreAgent {
       mcore.volume = parseInt(data);
       mcore.audio.volume = mcore.volume / 100;
       dcore.drawVolumeSlider();
+    }
+    else if ( instruction == "clear_queue" ) {
+      mcore.queue = [];
+      mcore.playNextSong();
+      if ( queue ) queue.render();
+    }
+    else if ( instruction == "shuffle_queue" ) {
+      for ( var i = mcore.queue.length - 1; i > 0; i-- ) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = mcore.queue[i];
+        mcore.queue[i] = mcore.queue[j];
+        mcore.queue[j] = temp;
+      }
+      if ( queue ) queue.render();
+    }
+    else if ( instruction == "move_item" ) {
+      var item = mcore.queue[data[0]];
+      mcore.queue = mcore.queue.slice(0,data[0]).concat(mcore.queue.slice(data[0] + 1));
+      mcore.queue.splice(data[0] + data[1],0,item);
+      if ( queue ) queue.render();
+    }
+    else if ( instruction == "move_top" ) {
+      var item = mcore.queue[data[0]];
+      mcore.queue = mcore.queue.slice(0,data[0]).concat(mcore.queue.slice(data[0] + 1));
+      mcore.queue.splice(0,0,item);
+      if ( queue ) queue.render();
+    }
+    else if ( instruction == "remove_item" ) {
+      mcore.queue = mcore.queue.slice(0,data[0]).concat(mcore.queue.slice(data[0] + 1));
+      if ( queue ) queue.render();
+    }
+    else if ( instruction == "remove_album" ) {
+      var albumName = mcore.queue[index].split("/");
+      albumName = albumName.slice(0,albumName.length - 1);
+      mcore.queue = mcore.queue.filter(item => ! item.startsWith(albumName.join("/")));
+      if ( queue ) queue.render();
     }
   }
 }

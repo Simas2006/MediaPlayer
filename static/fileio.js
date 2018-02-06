@@ -150,7 +150,8 @@ class OnlineModeManager {
     request(this.loginData.streaming.url + "/scall?" + cg.encrypt(message,this.loginData.streaming.token),function(err,meh,body) {
       if ( err ) throw err;
       if ( body == "err_no_allow_connect" ) {
-        alert("You were disconnected by the streaming device.")
+        alert("You were disconnected by the streaming device.");
+        t.usingStream = false;
         t.changeStreamState(0);
       }
       else callback();
@@ -172,7 +173,7 @@ class OnlineModeManager {
             request(t.loginData.streaming.url + "/connect",function(err,meh,body) {
               if ( err ) throw err;
               if ( body == "err_no_allow_connect" ) {
-                alert("Someone is already connected to the streaming device. Try disconnecting the user on the device.");
+                alert("Either someone is already connected to the device, or the device is not listening for connections. Please fix these issues before trying again.");
                 t.changeStreamState(0);
               } else {
                 t.loginData.streaming.token = cg.decrypt(body.toString(),localStorage.getItem("stream_key")).toString();
@@ -188,6 +189,7 @@ class OnlineModeManager {
       } else {
         request(this.loginData.streaming.url + "/end",function(err,meh,body) {
           if ( err ) throw err;
+          t.usingStream = false;
         });
       }
     }

@@ -2,7 +2,8 @@ var fs = require("fs");
 var crypto_s = require("crypto");
 var request = require("request");
 var extract = require("extract-zip");
-var cg;
+var {spawn} = require("child_process");
+var cg,proc;
 var APPDATA = (process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : "/var/local")) + "/mediaplayer";
 var SSTATE = 0;
 
@@ -247,6 +248,16 @@ class OfflineModeManager {
     ];
     document.getElementById("stream_text").innerText = text[SSTATE][0];
     document.getElementById("stream_link").innerText = text[SSTATE][1];
+  }
+  createStreamProcess() {
+    proc = spawn("node",[__dirname + "/../internalServer.js","password","8001"]);
+    proc.stdout.pipe(fs.createWriteStream(__dirname + "/stream.log"));
+    proc.stderr.on("data",function(data) {
+      console.log("STREAM_ERR " + data);
+    });
+    proc.on("close",function(code) {
+      alert("The streaming server stopped with code " + code);
+    });
   }
 }
 

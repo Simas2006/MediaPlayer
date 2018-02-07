@@ -35,6 +35,7 @@
     "online": "Login Online",
     "offline": "Login Offline",
     "ip_address": "IP Address",
+    "port": "Port",
     "password": "Password",
     "login_button": "Login",
     "error_occurred": "An error occurred",

@@ -162,7 +162,7 @@ class OnlineModeManager {
     var t = this;
     if ( customValue === undefined ) {
       if ( SSTATE == 0 ) {
-        var connectWindow = open(__dirname + "/connect/index.html","Connect to streaming");
+        var connectWindow = open(__dirname + "/connect/index.html","Connect to Streaming");
         localStorage.removeItem("stream_url");
         localStorage.removeItem("stream_key");
         localStorage.removeItem("stream_close");
@@ -207,9 +207,7 @@ class OnlineModeManager {
 class OfflineModeManager {
   constructor() {
     this.usingStream = false;
-    this.streamData = {
-      url: "http://localhost:8001"
-    }
+    this.streamPort = null;
   }
   attachToken(callback) { callback(); }
   retrieveFile(fpath,callback) { callback(APPDATA + "/LocalMedia/" + fpath); }
@@ -232,8 +230,9 @@ class OfflineModeManager {
   }
   changeStreamState(customValue) {
     if ( customValue === undefined ) {
+      if ( SSTATE == 0 && ! proc ) this.createStreamProcess();
       if ( SSTATE == 2 ) {
-        request(this.streamData.url + "/end",function(err,meh,body) {
+        request("http://localhost:" + this.streamPort + "/end",function(err,meh,body) {
           if ( err ) throw err;
         });
       } else {
@@ -250,14 +249,30 @@ class OfflineModeManager {
     document.getElementById("stream_link").innerText = text[SSTATE][1];
   }
   createStreamProcess() {
-    proc = spawn("node",[__dirname + "/../internalServer.js","password","8001"]);
-    proc.stdout.pipe(fs.createWriteStream(__dirname + "/stream.log"));
-    proc.stderr.on("data",function(data) {
-      console.log("STREAM_ERR " + data);
-    });
-    proc.on("close",function(code) {
-      alert("The streaming server stopped with code " + code);
-    });
+    var t = this;
+    var connectWindow = open(__dirname + "/connect/index.html?server","Start Streaming");
+    localStorage.removeItem("stream_url");
+    localStorage.removeItem("stream_key");
+    localStorage.removeItem("stream_close");
+    this.streamGetInterval = setInterval(function() {
+      if ( localStorage.getItem("stream_url") ) {
+        connectWindow.close();
+        t.usingStream = true;
+        t.streamPort = localStorage.getItem("stream_url");
+        proc = spawn("node",[__dirname + "/../internalServer.js",localStorage.getItem("stream_key"),localStorage.getItem("stream_url")]);
+        proc.stdout.pipe(fs.createWriteStream(__dirname + "/stream.log"));
+        proc.stderr.on("data",function(data) {
+          console.log("STREAM_ERR " + data);
+        });
+        proc.on("close",function(code) {
+          alert("The streaming server stopped with code " + (code || 0));
+        });
+        clearInterval(t.streamGetInterval);
+      } else if ( connectWindow.closed || localStorage.getItem("stream_close") ) {
+        connectWindow.close();
+        clearInterval(t.streamGetInterval);
+      }
+    },250);
   }
 }
 
@@ -269,8 +284,7 @@ function dataManagerInit() {
       dataManager.loginData.url = "http://" + dataManager.loginData.url;
     }
     dataManager.loginData.key = localStorage.getItem("password");
-  }
-  else if ( localStorage.getItem("type") == "offline" ) {
+  } else if ( localStorage.getItem("type") == "offline" ) {
     dataManager = new OfflineModeManager();
   }
 }

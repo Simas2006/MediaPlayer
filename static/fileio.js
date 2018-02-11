@@ -137,15 +137,6 @@ class OnlineModeManager {
       });
     });
   }
-  toggleAllowConnections() {
-    fs.readFile(__dirname + "/connection_status.txt",function(err,data) {
-      if ( err ) throw err;
-      data = data.toString() == "yes" ? "no" : "yes";
-      fs.writeFile(__dirname + "/connection_status.txt",data,function(err) {
-        if ( err ) throw err;
-      });
-    });
-  }
   streamToServer(message,callback) {
     var t = this;
     console.log(message);
@@ -209,11 +200,11 @@ class OfflineModeManager {
     this.streamPort = null;
     setInterval(function() {
       if ( t.streamPort ) {
-        fs.readFile(__dirname + "/../interactions.json",function(err,data) {
+        fs.readFile(APPDATA + "/StreamData/interactions.json",function(err,data) {
           if ( err ) throw err;
           data = JSON.parse(data.toString());
           data.keepAlive = Math.floor(Math.random() * 1e10);
-          fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
+          fs.writeFile(APPDATA + "/StreamData/interactions.json",JSON.stringify(data,null,2),Function.prototype);
         });
       }
     },1999);
@@ -230,11 +221,11 @@ class OfflineModeManager {
   }
   clearFile(address,callback) { callback(); }
   toggleAllowConnections() {
-    fs.readFile(__dirname + "/../interactions.json",function(err,data) {
+    fs.readFile(APPDATA + "/StreamData/interactions.json",function(err,data) {
       if ( err ) throw err;
       data = JSON.parse(data.toString());
       data.allowConnections = ! data.allowConnections;
-      fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
+      fs.writeFile(APPDATA + "/StreamData/interactions.json",JSON.stringify(data,null,2),Function.prototype);
     });
   }
   changeStreamState(customValue) {
@@ -263,8 +254,8 @@ class OfflineModeManager {
       if ( localStorage.getItem("stream_url") ) {
         connectWindow.close();
         t.streamPort = localStorage.getItem("stream_url");
-        proc = spawn("node",[__dirname + "/../internalServer.js",localStorage.getItem("stream_key"),localStorage.getItem("stream_url")]);
-        proc.stdout.pipe(fs.createWriteStream(__dirname + "/stream.log"));
+        proc = spawn("node",[APPDATA + "/StreamData/internalServer.js",localStorage.getItem("stream_key"),localStorage.getItem("stream_url")]);
+        proc.stdout.pipe(fs.createWriteStream(APPDATA + "/StreamData/stream.log"));
         proc.stderr.on("data",function(data) {
           console.log("STREAM_ERR " + data);
         });

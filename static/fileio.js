@@ -34,7 +34,8 @@ class Cryptographer {
 cg = new Cryptographer();
 
 class OnlineModeManager {
-  constructor() {
+  constructor(lang) {
+    this.lang = lang;
     this.usingStream = false;
     this.streamGetInterval = null;
     this.loginData = {
@@ -120,7 +121,7 @@ class OnlineModeManager {
     request(t.loginData.url + "/zip/photos/" + album + "?" + t.loginData.id,function(err,meh,body) {
       if ( err ) throw err;
       if ( body == "err_too_large" ) {
-        alert("This album is too large and cannot be downloaded.");
+        alert(t.lang.sizeTooLarge);
         callback(true);
         return;
       }
@@ -149,9 +150,8 @@ class OnlineModeManager {
     var t = this;
     console.log(message);
     request(this.loginData.streaming.url + "/scall?" + cg.encrypt(message,this.loginData.streaming.token),function(err,meh,body) {
-      if ( err ) throw err;
       if ( body == "err_no_allow_connect" ) {
-        alert("You were disconnected by the streaming device.");
+        alert(t.lang.disconnected);
         t.usingStream = false;
         t.changeStreamState(0);
       }
@@ -162,7 +162,7 @@ class OnlineModeManager {
     var t = this;
     if ( customValue === undefined ) {
       if ( SSTATE == 0 ) {
-        var connectWindow = open(__dirname + "/connect/index.html","Connect to Streaming");
+        var connectWindow = open(__dirname + "/connect/index.html",this.lang.stream_client.title);
         localStorage.removeItem("stream_url");
         localStorage.removeItem("stream_key");
         localStorage.removeItem("stream_close");
@@ -174,7 +174,7 @@ class OnlineModeManager {
             request(t.loginData.streaming.url + "/connect",function(err,meh,body) {
               if ( err ) throw err;
               if ( body == "err_no_allow_connect" ) {
-                alert("Either someone is already connected to the device, or the device is not listening for connections. Please fix these issues before trying again.");
+                alert(t.lang.no_allow_connect);
                 t.changeStreamState(0);
               } else {
                 t.loginData.streaming.token = cg.decrypt(body.toString(),localStorage.getItem("stream_key")).toString();
@@ -195,17 +195,15 @@ class OnlineModeManager {
       }
     }
     SSTATE = customValue != undefined ? customValue : (SSTATE < 1 ? 1 : SSTATE - 1);
-    var text = [
-      ["Not currently controlling device","Start streaming"],
-      ["Currently controlling device","Stop streaming"]
-    ];
+    var text = this.lang.stream_client.matrix;
     document.getElementById("stream_text").innerText = text[SSTATE][0];
     document.getElementById("stream_link").innerText = text[SSTATE][1];
   }
 }
 
 class OfflineModeManager {
-  constructor() {
+  constructor(lang) {
+    this.lang = lang;
     this.usingStream = false;
     this.streamPort = null;
   }
@@ -240,24 +238,19 @@ class OfflineModeManager {
       }
     }
     SSTATE = customValue != undefined ? customValue : (SSTATE < 1 ? 1 : SSTATE - 1);
-    var text = [
-      ["Not currently listening for connections","Start listening"],
-      ["Now listening for connections","Stop listening"],
-      ["Person currently controlling computer","End session"]
-    ];
+    var text = this.lang.stream_server.matrix;
     document.getElementById("stream_text").innerText = text[SSTATE][0];
     document.getElementById("stream_link").innerText = text[SSTATE][1];
   }
   createStreamProcess() {
     var t = this;
-    var connectWindow = open(__dirname + "/connect/index.html?server","Start Streaming");
+    var connectWindow = open(__dirname + "/connect/index.html?server",this.lang.stream_server.title);
     localStorage.removeItem("stream_url");
     localStorage.removeItem("stream_key");
     localStorage.removeItem("stream_close");
     this.streamGetInterval = setInterval(function() {
       if ( localStorage.getItem("stream_url") ) {
         connectWindow.close();
-        t.usingStream = true;
         t.streamPort = localStorage.getItem("stream_url");
         proc = spawn("node",[__dirname + "/../internalServer.js",localStorage.getItem("stream_key"),localStorage.getItem("stream_url")]);
         proc.stdout.pipe(fs.createWriteStream(__dirname + "/stream.log"));
@@ -265,7 +258,7 @@ class OfflineModeManager {
           console.log("STREAM_ERR " + data);
         });
         proc.on("close",function(code) {
-          alert("The streaming server stopped with code " + (code || 0));
+          alert(t.lang.stream_server.stopped + (code || 0));
         });
         clearInterval(t.streamGetInterval);
       } else if ( connectWindow.closed || localStorage.getItem("stream_close") ) {
@@ -276,15 +269,15 @@ class OfflineModeManager {
   }
 }
 
-function dataManagerInit() {
+function dataManagerInit(lang) {
   if ( localStorage.getItem("type") == "online" ) {
-    dataManager = new OnlineModeManager();
+    dataManager = new OnlineModeManager(lang);
     dataManager.loginData.url = localStorage.getItem("address");
     if ( ! dataManager.loginData.url.startsWith("http") ) {
       dataManager.loginData.url = "http://" + dataManager.loginData.url;
     }
     dataManager.loginData.key = localStorage.getItem("password");
   } else if ( localStorage.getItem("type") == "offline" ) {
-    dataManager = new OfflineModeManager();
+    dataManager = new OfflineModeManager(lang);
   }
 }

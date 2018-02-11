@@ -203,9 +203,20 @@ class OnlineModeManager {
 
 class OfflineModeManager {
   constructor(lang) {
+    var t = this;
     this.lang = lang;
     this.usingStream = false;
     this.streamPort = null;
+    setInterval(function() {
+      if ( t.streamPort ) {
+        fs.readFile(__dirname + "/../interactions.json",function(err,data) {
+          if ( err ) throw err;
+          data = JSON.parse(data.toString());
+          data.keepAlive = Math.floor(Math.random() * 1e10);
+          fs.writeFile(__dirname + "/../interactions.json",JSON.stringify(data,null,2),Function.prototype);
+        });
+      }
+    },1999);
   }
   attachToken(callback) { callback(); }
   retrieveFile(fpath,callback) { callback(APPDATA + "/LocalMedia/" + fpath); }
@@ -263,6 +274,7 @@ class OfflineModeManager {
         clearInterval(t.streamGetInterval);
       } else if ( connectWindow.closed || localStorage.getItem("stream_close") ) {
         connectWindow.close();
+        t.changeStreamState();
         clearInterval(t.streamGetInterval);
       }
     },250);

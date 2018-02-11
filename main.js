@@ -8,7 +8,7 @@ function createWindow() {
   window = new BrowserWindow({
     width: size.width,
     height: size.height,
-    "nodeIntegration": "iframe",
+    nodeIntegration: "iframe",
     webPreferences: {
       webSecurity: false
     }
@@ -26,7 +26,11 @@ app.on("ready",function() {
     fs.mkdirSync(APPDATA + "/LocalMedia");
     fs.mkdirSync(APPDATA + "/LocalMedia/photos");
     fs.mkdirSync(APPDATA + "/LocalMedia/music");
-    fs.writeFileSync(APPDATA + "/LocalMedia/games.txt");
+    fs.writeFileSync(APPDATA + "/LocalMedia/games.txt","");
+    fs.mkdirSync(APPDATA + "/StreamData");
+    fs.createReadStream(__dirname + "/interactions.json").pipe(fs.createWriteStream(APPDATA + "/StreamData/interactions.json"));
+    fs.createReadStream(__dirname + "/internalServer.js").pipe(fs.createWriteStream(APPDATA + "/StreamData/internalServer.js"));
+    fs.writeFileSync(APPDATA + "/StreamData/keepalive","");
     fs.mkdirSync(APPDATA + "/TempData");
     createWindow();
   } else {

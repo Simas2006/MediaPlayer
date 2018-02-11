@@ -7,10 +7,7 @@ class CoreAgent {
   constructor() {
     var t = this;
     this.queueOpen = false;
-    fs.readFile(__dirname + "/lang/" + localStorage.getItem("language"),function(err,data) {
-      if ( err ) throw err;
-      t.langFile = JSON.parse(data.toString());
-    });
+    t.langFile = JSON.parse(fs.readFileSync(__dirname + "/lang/" + localStorage.getItem("language")).toString());
   }
   renderPage() {
     page = new pageDict[activePage](params,this.streamToServer,function() {
@@ -68,17 +65,16 @@ class MusicCoreAgent {
     this.queue = [];
     this.firstTrigger = true;
     this.playing = false;
-    this.waiting = false;
+    this.waiting = 0;
     this.hasSong = false;
     this.volume = 50;
     this.audio = document.getElementById("musicaudio");
     this.audio.addEventListener("ended",function() {
-      mcore.waiting = false;
       mcore.playNextSong();
     });
     setInterval(function() {
-      mcore.waiting = false;
-    },2000);
+      if ( mcore.waiting > 0 ) mcore.waiting--;
+    },1);
     setTimeout(function() {
       t.lang = core.retrieveLanguage("musicbar");
       document.getElementById("queuebutton").innerText = t.lang.queue_button;
@@ -86,8 +82,8 @@ class MusicCoreAgent {
     },500);
   }
   playNextSong() {
-    if ( this.waiting ) return;
-    this.waiting = true;
+    if ( this.waiting > 0 ) return;
+    this.waiting = 2000;
     core.streamToServer("play_nsong","mcore");
     dataManager.clearFile("music",function() {
       if ( mcore.queue.length <= 0 ) {
@@ -268,8 +264,8 @@ window.onload = function() {
   core = new CoreAgent();
   mcore = new MusicCoreAgent();
   dcore = new DrawingCoreAgent();
-  setTimeout(core.renderPage,500);
-  dataManagerInit();
+  core.renderPage();
+  dataManagerInit(core.langFile["DataManager"]);
   dataManager.attachToken(Function.prototype);
   dataManager.changeStreamState(0);
   fs.readFile(__dirname + "/../interactions.json",function(err,data) {

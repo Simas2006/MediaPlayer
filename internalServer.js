@@ -5,8 +5,7 @@ var app = express();
 var KEY = process.argv[2];
 var PORT = process.argv[3] || 8000;
 var TIMEOUT = 72 * 60 * 60 * 1000;
-var cg;
-var userKey;
+var cg,userKey,lastRand;
 var disconnected = [];
 var queue = [];
 
@@ -111,4 +110,16 @@ app.listen(PORT,function() {
       }
     });
   },100);
+  setInterval(function() {
+    fs.readFile(__dirname + "/interactions.json",function(err,data) {
+      if ( err ) throw err;
+      data = JSON.parse(data.toString());
+      if ( data.keepAlive != lastRand ) {
+        lastRand = data.keepAlive;
+      } else {
+        console.log("KEEP_ALIVE_FAIL");
+        process.exit(0);
+      }
+    });
+  },4000);
 });

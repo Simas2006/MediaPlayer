@@ -31,10 +31,12 @@
   },
   "LoginPage": {
     "title": "MediaPlayer",
-    "stream_title": "Connect to Streaming",
+    "stream_client_title": "Connect to Streaming",
+    "stream_server_title": "Start Streaming",
     "online": "Login Online",
     "offline": "Login Offline",
     "ip_address": "IP Address",
+    "port": "Port",
     "password": "Password",
     "login_button": "Login",
     "error_occurred": "An error occurred",
@@ -45,6 +47,24 @@
       "invalid_id": "Server did not recognize computer/Server was reset",
       "grace_disconnected": "Your session was disconnected for inactivity",
       "server_error": "An error occurred with the server/Try reconnecting/Check server log for details"
+    }
+  },
+  "DataManager": {
+    "stream_client": {
+      "title": "Connect to Streaming",
+      "matrix": [
+        ["Not currently connected to streamer","Start streaming"],
+        ["Currently connected to streamer","Stop streaming"]
+      ]
+    },
+    "stream_server": {
+      "title": "Start Streaming",
+      "stopped": "The streamer stopped with code ",
+      "matrix": [
+        ["Not currently listening for stream requests","Start streaming"],
+        ["Currenly listening for stream requests","Stop streaming"],
+        ["Person is currently controlling device","End session"]
+      ]
     }
   }
 }

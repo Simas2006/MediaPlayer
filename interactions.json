@@ -1,6 +1,5 @@
 {
-  "allowConnections": true,
-  "keepAlive": -1,
+  "allowConnections": false,
   "sessionStart": false,
   "sessionEnd": false,
   "scall": null

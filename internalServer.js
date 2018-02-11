@@ -111,11 +111,11 @@ app.listen(PORT,function() {
     });
   },100);
   setInterval(function() {
-    fs.readFile(__dirname + "/interactions.json",function(err,data) {
+    fs.readFile(__dirname + "/keepalive",function(err,data) {
       if ( err ) throw err;
-      data = JSON.parse(data.toString());
-      if ( data.keepAlive != lastRand ) {
-        lastRand = data.keepAlive;
+      data = data.toString();
+      if ( data != lastRand ) {
+        lastRand = data;
       } else {
         console.log("KEEP_ALIVE_FAIL");
         process.exit(0);

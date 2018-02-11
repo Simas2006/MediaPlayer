@@ -54,7 +54,7 @@
       "title": "Connect to Streaming",
       "matrix": [
         ["Not currently connected to streamer","Start streaming"],
-        ["Currently connected to streamer","Stop streaming"]
+        ["Now connected to streamer","Stop streaming"]
       ]
     },
     "stream_server": {
@@ -62,7 +62,7 @@
       "stopped": "The streamer stopped with code ",
       "matrix": [
         ["Not currently listening for stream requests","Start streaming"],
-        ["Currenly listening for stream requests","Stop streaming"],
+        ["Now listening for stream requests","Stop streaming"],
         ["Person is currently controlling device","End session"]
       ]
     }

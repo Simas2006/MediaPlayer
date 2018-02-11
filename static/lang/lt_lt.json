@@ -31,9 +31,12 @@
   },
   "LoginPage": {
     "title": "MediaPlayer",
+    "stream_client_title": "Prisijungti prie transliavimo",
+    "stream_server_title": "Pradieti transliouti",
     "online": "Prisijungti per interneta",
     "offline": "Prisjungti be interneto",
     "ip_address": "Adresas",
+    "port": "Vartas",
     "password": "Slaptazodis",
     "login_button": "Prisijunk",
     "error_occurred": "Ivyko klaida",
@@ -44,6 +47,24 @@
       "invalid_id": "Serveris neatpazino komputerio/Serveris perkrautas",
       "grace_disconnected": "Atjungta del neveiklumo",
       "server_error": "Serverio klaida/Pabandyk vel prisjungti"
+    }
+  },
+  "DataManager": {
+    "stream_client": {
+      "title": "Prisijungti prie transliavimo",
+      "matrix": [
+        ["Neprijungta prie transliuotojo","Prisijunk"],
+        ["Prijunta pried transliuotojo","Atsijunk"]
+      ]
+    },
+    "stream_server": {
+      "title": "Pradieti transliouti",
+      "stopped": "Transliavimo serveris sustojo su kodu ",
+      "matrix": [
+        ["Ne klausom transliavimo prasymu","Klausyk"],
+        ["Klausom transliavimo prasymu","Ne klausyk"],
+        ["Kaskas dabar kontroluoja komputeri","Atjunk"]
+      ]
     }
   }
 }

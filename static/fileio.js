@@ -255,21 +255,13 @@ class OfflineModeManager {
   }
   createStreamProcess() {
     var t = this;
-<<<<<<< HEAD
-    var connectWindow = open(__dirname + "/connect/index.html?server","Start Streaming");
-=======
     var connectWindow = open(__dirname + "/connect/index.html?server",this.lang.stream_server.title);
->>>>>>> 4424b745632ea37f4056ce0a21dff0c0997ebc81
     localStorage.removeItem("stream_url");
     localStorage.removeItem("stream_key");
     localStorage.removeItem("stream_close");
     this.streamGetInterval = setInterval(function() {
       if ( localStorage.getItem("stream_url") ) {
         connectWindow.close();
-<<<<<<< HEAD
-        t.usingStream = true;
-=======
->>>>>>> 4424b745632ea37f4056ce0a21dff0c0997ebc81
         t.streamPort = localStorage.getItem("stream_url");
         proc = spawn("node",[__dirname + "/../internalServer.js",localStorage.getItem("stream_key"),localStorage.getItem("stream_url")]);
         proc.stdout.pipe(fs.createWriteStream(__dirname + "/stream.log"));
@@ -277,19 +269,12 @@ class OfflineModeManager {
           console.log("STREAM_ERR " + data);
         });
         proc.on("close",function(code) {
-<<<<<<< HEAD
-          alert("The streaming server stopped with code " + (code || 0));
-=======
           alert(t.lang.stream_server.stopped + (code || 0));
->>>>>>> 4424b745632ea37f4056ce0a21dff0c0997ebc81
         });
         clearInterval(t.streamGetInterval);
       } else if ( connectWindow.closed || localStorage.getItem("stream_close") ) {
         connectWindow.close();
-<<<<<<< HEAD
-=======
         t.changeStreamState();
->>>>>>> 4424b745632ea37f4056ce0a21dff0c0997ebc81
         clearInterval(t.streamGetInterval);
       }
     },250);
@@ -305,10 +290,6 @@ function dataManagerInit(lang) {
     }
     dataManager.loginData.key = localStorage.getItem("password");
   } else if ( localStorage.getItem("type") == "offline" ) {
-<<<<<<< HEAD
-    dataManager = new OfflineModeManager();
-=======
     dataManager = new OfflineModeManager(lang);
->>>>>>> 4424b745632ea37f4056ce0a21dff0c0997ebc81
   }
 }

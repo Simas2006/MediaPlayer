@@ -48,17 +48,32 @@ function handleCommand(command) {
     }
   }
   if ( activePage == "MusicListPage" ) {
-    if ( command[0] == "select" ) {
-      var files = page.files.map(item => {
-        var songName = decodeURIComponent(decodeURIComponent(item));
-        songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-        if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
-        return songName;
-      });
-      var indices = command.slice(1).join(" ").split(",").map(item => files.indexOf(item));
-      for ( var i = 0; i < indices.length; i++ ) {
-        page.toggleItem(encodeURIComponent(page.files[indices[i]]),1);
+    if ( command[0] == "select" || command[0] == "deselect" ) {
+      if ( command[1] != "all" ) {
+        var files = page.files.map(item => {
+          var songName = decodeURIComponent(decodeURIComponent(item));
+          songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+          if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
+          return songName.toLowerCase();
+        });
+        var indices = command.slice(1).join(" ").split(",").map(item => files.indexOf(item.trim()));
+        for ( var i = 0; i < indices.length; i++ ) {
+          page.toggleItem(encodeURIComponent(page.files[indices[i]]),["","select","deselect"].indexOf(command[0]));
+        }
+        writeResult("ok");
+      } else {
+        if ( command[0] == "select" ) {
+          page.selected = page.files.map(item => escape(item));
+          page.selectionText = page.lang.deselect_all;
+        } else {
+          page.selected = [];
+          page.selectionText = page.lang.select_all;
+        }
+        page.render();
+        writeResult("ok");
       }
+    } else if ( command[0] == "add" ) {
+      page.addToQueue();
       writeResult("ok");
     }
   }

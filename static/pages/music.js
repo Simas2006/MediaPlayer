@@ -51,12 +51,12 @@ ${this.files.map(item => {
 `;
     render();
   }
-  toggleItem(item) {
+  toggleItem(item,mode) {
     var index = this.selected.indexOf(item);
-    if ( index > -1 ) {
+    if ( index > -1 && mode != 1 ) {
       this.selected = this.selected.slice(0,index).concat(this.selected.slice(index + 1));
       this.selectionText = this.lang.select_all;
-    } else {
+    } else if ( mode != 2 ) {
       this.selected.push(item);
     }
     this.render();

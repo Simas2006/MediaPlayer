@@ -75,11 +75,10 @@ class PhotoViewerPage {
         dataManager.retrieveFile("/photos/" + t.albumName + "/" + t.files[t.index],function(address) {
           img.src = address;
           img.onload = function() {
-            var ratio = t.calculateAccurateRatio(img);
             EXIF.getData(img,function() {
               var ovalue = EXIF.getTag(this,"Orientation");
               var rvalue = ([0,-1,180,-1,-1,90,-1,270][ovalue - 1] || 0) + t.addedRotation;
-              text = `<img src="${address}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" width=${img.width * ratio} height=${img.height * ratio} />`;
+              text = `<img src="${address}" style="transform: rotate(${rvalue}deg)" onclick="page.moveImage(1)" ${window.innerWidth < window.innerHeight ? `width="${window.innerWidth}"` : ``} ${window.innerHeight < window.innerWidth ? `height="${window.innerHeight}px"` : ``} />`;
               mergePath();
             });
           }
@@ -115,18 +114,6 @@ class PhotoViewerPage {
     if ( this.index >= this.files.length ) this.index = 0;
     this.addedRotation = 0;
     this.render();
-  }
-  calculateAccurateRatio(img) {
-    if ( img.width > screen.width || img.height > screen.height ) {
-      for ( var r = 1; r > 0; r -= RATIO_ACCURACY ) {
-        if ( img.width * r <= screen.width && img.height * r <= screen.height ) return r;
-      }
-    } else {
-      for ( var r = 1; true; r += RATIO_ACCURACY ) {
-        if ( img.width * r > screen.width && img.height * r > screen.height ) return r - RATIO_ACCURACY;
-      }
-    }
-    throw "wat (ratio calculator)";
   }
   rotate() {
     this.addedRotation += 90;

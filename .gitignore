@@ -2,3 +2,7 @@ node_modules/
 server/media/
 server/tokens.json
 server/temp_zip.zip
+discord/token.txt
+discord/active
+discord/instructions
+discord/response

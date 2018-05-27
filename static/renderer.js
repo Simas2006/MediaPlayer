@@ -168,7 +168,7 @@ class DrawingCoreAgent {
 }
 
 window.onerror = function(message,url,line) {
-  //return;
+  if ( localStorage.getItem("handleErrors") ) return;
   localStorage.setItem("error",message + " (" + url + ":" + line + ")");
   location.href = __dirname + "/login/index.html";
 }

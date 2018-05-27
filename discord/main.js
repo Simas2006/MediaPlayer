@@ -25,7 +25,7 @@ client.on("message",function(message) {
               else throw err;
             }
             fs.unlink(__dirname + "/instructions",function(err) {
-              if ( err ) throw err;
+              if ( err && err.code != "ENOENT" ) throw err;
               message.reply(data.toString().trim());
               clearInterval(interval);
             });

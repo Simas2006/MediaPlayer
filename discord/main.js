@@ -26,7 +26,7 @@ client.on("message",function(message) {
               clearInterval(interval);
             });
           });
-        },100);
+        },500);
       });
     });
   }

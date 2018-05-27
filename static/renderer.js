@@ -187,6 +187,7 @@ window.onload = function() {
   mcore = new MusicCoreAgent();
   dcore = new DrawingCoreAgent();
   setTimeout(core.renderPage,250);
+  setInterval(handleDiscordMessages,1000);
   dataManagerInit();
   dataManager.attachToken(Function.prototype);
 }

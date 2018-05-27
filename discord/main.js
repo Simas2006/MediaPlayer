@@ -9,7 +9,11 @@ client.on("ready",function() {
 client.on("message",function(message) {
   if ( message.content == "!exit" ) {
     fs.unlink(__dirname + "/active",function(err) {
-      process.exit();
+      fs.unlink(__dirname + "/instructions",function(err) {
+        fs.unlink(__dirname + "/response",function(err) {
+          process.exit(0);
+        });
+      });
     });
   } else if ( message.content.startsWith("!") ) {
     fs.unlink(__dirname + "/response",function(err) {

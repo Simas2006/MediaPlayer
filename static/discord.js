@@ -1,5 +1,3 @@
-var discordActive = true;
-
 function handleDiscordMessages() {
   fs.readFile(__dirname + "/../discord/active",function(err) {
     if ( err ) {
@@ -18,7 +16,7 @@ function handleDiscordMessages() {
 }
 
 function handleCommand(command) {
-  if ( command[0] == "move" ) {
+  if ( command[0] == "goto" ) {
     if ( command[1] == "music" ) {
       function checkPath(fpath,callback,index) {
         if ( ! index ) index = 0;
@@ -146,7 +144,7 @@ function handleCommand(command) {
     }
     if ( queue ) queue.render();
     writeResult("ok");
-  } else if ( command[0] == "place" ) {
+  } else if ( command[0] == "move" ) {
     var names = mcore.queue.map(item => {
       var songName = decodeURIComponent(decodeURIComponent(item));
       songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
@@ -214,6 +212,7 @@ function handleCommand(command) {
       writeResult(`${page.files[page.index]} is photo #${page.index + 1}/${page.files.length}`);
     }
   }
+  if ( ["goto","home","list","select","deselect","add","forward","backward","rotate","count","listqueue","lq","pause","pp","playnext","pn","openqueue","oq","rewind","volume","remove","shuffle","move"].indexOf(command[0]) <= -1 ) writeResult("Invalid command");
 }
 
 function writeResult(message) {

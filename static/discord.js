@@ -65,6 +65,7 @@ function handleCommand(command) {
       });
     } else if ( activePage == "MusicAlbumPage" || activePage == "MusicListPage" ) {
       dataManager.retrieveList(`/music/${params}`,function(list) {
+        list = list.map(item => item.indexOf(".") > -1 ? readableSongName(item) : item);
         writeResult(`${list.length} entries\n${"```"}\n${list.map((item,index) => item + (index == page.index ? " √" : "")).join("\n")}${"```"}`);
       });
     } else {
@@ -75,7 +76,7 @@ function handleCommand(command) {
       var split = item.split("/");
       return `${split[split.length - 2]}: ${decodeURIComponent(split[split.length - 1])} ${index == 0 ? " √" : ""}`;
     }).join("\n")}${"```"}`);
-  } else if ( command[0] == "pause" || command[0] == "pp" ) { // TODO: stop if ! mcore.playing
+  } else if ( command[0] == "pause" || command[0] == "pp" ) {
     if ( mcore.hasSong ) {
       mcore.togglePlay();
       writeResult("Music is " + (mcore.playing ? "playing" : "paused"));
@@ -114,12 +115,7 @@ function handleCommand(command) {
     writeResult("Set volume to " + value);
   } else if ( command[0] == "remove" ) {
     if ( command[1] != "all" ) {
-      var names = mcore.queue.map(item => {
-        var songName = decodeURIComponent(decodeURIComponent(item));
-        songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-        if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
-        return decodeURIComponent(songName).toLowerCase();
-      });
+      var names = mcore.queue.map(item => readableSongName(item).toLowerCase());
       var indices = command.slice(1).join(" ").split(",").map(item => names.indexOf(item.toLowerCase().trim()));
       if ( indices.filter(item => item <= -1).length > 0 ) {
         writeResult("Couldn't find that song");
@@ -145,12 +141,7 @@ function handleCommand(command) {
     if ( queue ) queue.render();
     writeResult("Shuffled the queue");
   } else if ( command[0] == "move" ) {
-    var names = mcore.queue.map(item => {
-      var songName = decodeURIComponent(decodeURIComponent(item));
-      songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-      if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
-      return decodeURIComponent(songName).toLowerCase();
-    });
+    var names = mcore.queue.map(item => readableSongName(item).toLowerCase());
     var index = names.indexOf(command.slice(1,-1).join(" ").toLowerCase().trim());
     if ( index <= -1 ) {
       writeResult("Couldn't find that song");
@@ -170,12 +161,7 @@ function handleCommand(command) {
   if ( activePage == "MusicListPage" ) {
     if ( command[0] == "select" || command[0] == "deselect" ) {
       if ( command[1] != "all" ) {
-        var files = page.files.map(item => {
-          var songName = decodeURIComponent(decodeURIComponent(item));
-          songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-          if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
-          return songName.toLowerCase();
-        });
+        var files = page.files.map(item => readableSongName(item).toLowerCase());
         var indices = command.slice(1).join(" ").split(",").map(item => files.indexOf(item.trim()));
         if ( indices.filter(item => item <= -1).length > 0 ) {
           writeResult("Couldn't find that song");

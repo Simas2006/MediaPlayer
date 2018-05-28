@@ -34,9 +34,7 @@ class MusicQueuePage {
 <button class="musicbutton" onclick="queue.shuffleSongs()">&#128256;</button>
 <hr />
 ${mcore.queue.length > 0 ? mcore.queue.map((item,index) => {
-var songName = decodeURIComponent(decodeURIComponent(item));
-songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
+var songName = readableSongName(item);
 return `
 <p>
   ${songName}

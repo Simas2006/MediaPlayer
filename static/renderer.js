@@ -77,8 +77,7 @@ class MusicCoreAgent {
         return;
       }
       var songName = decodeURIComponent(decodeURIComponent(mcore.queue[0]));
-      var visualSongName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-      if ( ! isNaN(parseInt(visualSongName.slice(0,2))) ) visualSongName = visualSongName.slice(3);
+      var visualSongName = readableSongName(songName);
       var source = document.getElementById("musicsrc");
       dataManager.retrieveFile("/music/" + songName,function(address) {
         source.src = encodeURI(address);
@@ -165,6 +164,13 @@ class DrawingCoreAgent {
     var x = event.clientX - rect.left;
     mcore.audio.currentTime = x / this.width * mcore.audio.duration;
   }
+}
+
+function readableSongName(song) {
+  var songName = decodeURIComponent(decodeURIComponent(song));
+  songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
+  if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
+  return songName;
 }
 
 window.onerror = function(message,url,line) {

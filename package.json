@@ -9,7 +9,6 @@
   "author": "Simas Juknelis",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "^11.3.2",
     "exif-js": "^2.3.0",
     "extract-zip": "^1.6.6",
     "request": "^2.83.0"

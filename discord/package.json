@@ -1,0 +1,18 @@
+{
+  "name": "mediaplayer-discord",
+  "version": "1.0.0",
+  "description": "MediaPlayer/Discord",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Simas2006/MediaPlayer.git"
+  },
+  "scripts": {
+    "test": "node main.js"
+  },
+  "author": "Simas Juknelis",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^11.3.2"
+  }
+}

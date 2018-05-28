@@ -20,14 +20,38 @@ function handleDiscordMessages() {
 function handleCommand(command) {
   if ( command[0] == "move" ) {
     if ( command[1] == "music" ) {
-      core.openPage("MusicAlbumPage","/" + command.slice(2).join(" "));
-      writeResult("ok");
+      function checkPath(fpath,callback,index) {
+        if ( ! index ) index = 0;
+        dataManager.retrieveList("/music/" + fpath.slice(0,index).join("/"),function(list) {
+          if ( list.indexOf(fpath[index]) > -1 ) {
+            if ( index + 1 >= fpath.length ) callback(true);
+            else checkPath(fpath,callback,index + 1);
+          } else {
+            callback(false);
+          }
+        });
+      }
+      if ( command[2] && command[2].startsWith("/") ) command[2] = command[2].slice(1);
+      checkPath(command.slice(2).join(" ").split("/"),function(valid) {
+        if ( valid || ! command[2] ) {
+          core.openPage("MusicAlbumPage","/" + command.slice(2).join(" "));
+          writeResult("ok");
+        } else {
+          writeResult("Couldn't find that album");
+        }
+      });
     } else if ( command[1] == "photos" ) {
-      if ( command[2] ) core.openPage("PhotoViewerPage",command.slice(2).join(" ") + ",0");
-      else core.openPage("PhotoAlbumPage","");
-      writeResult("ok");
+      dataManager.retrieveList("/photos",function(list) {
+        if ( list.indexOf(command.slice(2).join(" ")) > -1 || ! command[2] ) {
+          if ( command[2] ) core.openPage("PhotoViewerPage",command.slice(2).join(" ") + ",0");
+          else core.openPage("PhotoAlbumPage","");
+          writeResult("ok");
+        } else {
+          writeResult("Couldn't find that album");
+        }
+      });
     } else {
-      writeResult("Invalid command");
+      writeResult("Invalid subcommand");
     }
   } else if ( command[0] == "home" ) {
     core.openPage("MainPage","");
@@ -45,29 +69,47 @@ function handleCommand(command) {
       dataManager.retrieveList(`/music/${params}`,function(list) {
         writeResult(`${list.length} entries\n${"```"}\n${list.map((item,index) => item + (index == page.index ? " √" : "")).join("\n")}${"```"}`);
       });
+    } else {
+      writeResult("Invalid command");
     }
   } else if ( command[0] == "listqueue" || command[0] == "lq" ) {
     writeResult(`${mcore.queue.length} entries\n${"```"}\n${mcore.queue.map((item,index) => {
       var split = item.split("/");
       return `${split[split.length - 2]}: ${decodeURIComponent(split[split.length - 1])} ${index == 0 ? " √" : ""}`;
     }).join("\n")}${"```"}`);
-  } else if ( command[0] == "pause" || command[0] == "pp" ) {
-    mcore.togglePlay();
-    writeResult("ok");
+  } else if ( command[0] == "pause" || command[0] == "pp" ) { // TODO: stop if ! mcore.playing
+    if ( mcore.hasSong ) {
+      mcore.togglePlay();
+      writeResult("ok");
+    } else {
+      writeResult("No song is playing");
+    }
   } else if ( command[0] == "playnext" || command[0] == "pn" ) {
-    mcore.playNextSong();
-    writeResult("ok");
+    if ( mcore.hasSong ) {
+      mcore.playNextSong();
+      writeResult("ok");
+    } else {
+      writeResult("No song is playing");
+    }
   } else if ( command[0] == "openqueue" || command[0] == "oq" ) {
     core.toggleQueue();
     writeResult("ok");
   } else if ( command[0] == "rewind" ) {
-    mcore.setTime(0);
-    writeResult("ok");
+    if ( mcore.hasSong ) {
+      mcore.setTime(0);
+      writeResult("ok");
+    } else {
+      writeResult("No song is playing");
+    }
   } else if ( command[0] == "volume" ) {
     var value = parseInt(command[1]);
     if ( command[1].toLowerCase() == "up" ) value = Math.min(mcore.volume + 25,100);
     else if ( command[1].toLowerCase() == "down" ) value = Math.max(mcore.volume - 25,0);
     else if ( command[1].toLowerCase() == "mute" ) value = 0;
+    if ( isNaN(value) ) {
+      writeResult("Invalid value");
+      return;
+    }
     mcore.volume = value;
     mcore.audio.volume = mcore.volume / 100;
     dcore.drawVolumeSlider();
@@ -81,6 +123,10 @@ function handleCommand(command) {
         return decodeURIComponent(songName).toLowerCase();
       });
       var indices = command.slice(1).join(" ").split(",").map(item => names.indexOf(item.toLowerCase().trim()));
+      if ( indices.filter(item => item <= -1).length > 0 ) {
+        writeResult("Couldn't find that song");
+        return;
+      }
       for ( var i = 0; i < indices.length; i++ ) {
         if ( indices[i] <= -1 ) continue;
         mcore.queue = mcore.queue.slice(0,indices[i]).concat(mcore.queue.slice(indices[i] + 1));
@@ -108,6 +154,14 @@ function handleCommand(command) {
       return decodeURIComponent(songName).toLowerCase();
     });
     var index = names.indexOf(command.slice(1,-1).join(" ").toLowerCase().trim());
+    if ( index <= -1 ) {
+      writeResult("Couldn't find that song");
+      return;
+    }
+    if ( ["top","up","down"].indexOf(command[command.length - 1]) <= -1 ) {
+      writeResult("Invalid subcommand");
+      return;
+    }
     var position = [0,index - 1,index + 1][["top","up","down"].indexOf(command[command.length - 1])];
     var item = mcore.queue[index];
     mcore.queue = mcore.queue.slice(0,index).concat(mcore.queue.slice(index + 1));
@@ -125,6 +179,10 @@ function handleCommand(command) {
           return songName.toLowerCase();
         });
         var indices = command.slice(1).join(" ").split(",").map(item => files.indexOf(item.trim()));
+        if ( indices.filter(item => item <= -1).length > 0 ) {
+          writeResult("Couldn't find that song");
+          return;
+        }
         for ( var i = 0; i < indices.length; i++ ) {
           page.toggleItem(encodeURIComponent(page.files[indices[i]]),["","select","deselect"].indexOf(command[0]));
         }

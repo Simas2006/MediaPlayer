@@ -183,6 +183,8 @@ function handleCommand(command) {
       page.addToQueue();
       writeResult("Added songs to the queue");
     }
+  } else if ( ["select","deselect","add"].indexOf(command[0]) > -1 ) {
+    writeResult("Invalid command");
   } else if ( activePage == "PhotoViewerPage" ) {
     if ( command[0] == "forward" || command[0] == "backward" ) {
       var value = parseInt(command[1]) ? parseInt(command[1]) : 1;
@@ -194,6 +196,8 @@ function handleCommand(command) {
     } else if ( command[0] == "count" ) {
       writeResult(`${page.files[page.index]} is photo #${page.index + 1}/${page.files.length}`);
     }
+  } else if ( ["forward","backward","rotate","count"].indexOf(command[0]) > -1 ) {
+    writeResult("Invalid command");
   }
   if ( command[0] == "help" ) {
     var table;

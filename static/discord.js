@@ -72,10 +72,7 @@ function handleCommand(command) {
       writeResult("Invalid command");
     }
   } else if ( command[0] == "listqueue" || command[0] == "lq" ) {
-    writeResult(`${mcore.queue.length} entries\n${"```"}\n${mcore.queue.map((item,index) => {
-      var split = item.split("/");
-      return `${split[split.length - 2]}: ${decodeURIComponent(split[split.length - 1])} ${index == 0 ? " √" : ""}`;
-    }).join("\n")}${"```"}`);
+    writeResult(`${mcore.queue.length} entries\n${"```"}\n${[document.getElementById("musicname").innerText + " √"].concat(mcore.queue.map(item => readableSongName(item))).join("\n")}${"```"}`);
   } else if ( command[0] == "pause" || command[0] == "pp" ) {
     if ( mcore.hasSong ) {
       mcore.togglePlay();

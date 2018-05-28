@@ -21,7 +21,7 @@ function handleCommand(command) {
       function checkPath(fpath,callback,index) {
         if ( ! index ) index = 0;
         dataManager.retrieveList("/music/" + fpath.slice(0,index).join("/"),function(list) {
-          if ( list.indexOf(fpath[index]) > -1 ) {
+          if ( list.map(item => item.toLowerCase()).indexOf(fpath[index].toLowerCase()) > -1 ) {
             if ( index + 1 >= fpath.length ) callback(true);
             else checkPath(fpath,callback,index + 1);
           } else {
@@ -33,7 +33,7 @@ function handleCommand(command) {
       checkPath(command.slice(2).join(" ").split("/"),function(valid) {
         if ( valid || ! command[2] ) {
           core.openPage("MusicAlbumPage","/" + command.slice(2).join(" "));
-          writeResult("ok");
+          writeResult("Moved to music/" + command.slice(2).join(" "));
         } else {
           writeResult("Couldn't find that album");
         }
@@ -43,7 +43,7 @@ function handleCommand(command) {
         if ( list.indexOf(command.slice(2).join(" ")) > -1 || ! command[2] ) {
           if ( command[2] ) core.openPage("PhotoViewerPage",command.slice(2).join(" ") + ",0");
           else core.openPage("PhotoAlbumPage","");
-          writeResult("ok");
+          writeResult("Moved to photos/" + command.slice(2).join(" "));
         } else {
           writeResult("Couldn't find that album");
         }
@@ -53,7 +53,7 @@ function handleCommand(command) {
     }
   } else if ( command[0] == "home" ) {
     core.openPage("MainPage","");
-    writeResult("ok");
+    writeResult("Moved to home");
   } else if ( command[0] == "list" ) {
     if ( activePage == "PhotoAlbumPage" ) {
       dataManager.retrieveList("/photos",function(list) {
@@ -78,24 +78,24 @@ function handleCommand(command) {
   } else if ( command[0] == "pause" || command[0] == "pp" ) { // TODO: stop if ! mcore.playing
     if ( mcore.hasSong ) {
       mcore.togglePlay();
-      writeResult("ok");
+      writeResult("Music is " + (mcore.playing ? "playing" : "paused"));
     } else {
       writeResult("No song is playing");
     }
   } else if ( command[0] == "playnext" || command[0] == "pn" ) {
     if ( mcore.hasSong ) {
       mcore.playNextSong();
-      writeResult("ok");
+      writeResult("Now playing next song");
     } else {
       writeResult("No song is playing");
     }
   } else if ( command[0] == "openqueue" || command[0] == "oq" ) {
     core.toggleQueue();
-    writeResult("ok");
+    writeResult((queue ? "Opened" : "Closed") + " the queue");
   } else if ( command[0] == "rewind" ) {
     if ( mcore.hasSong ) {
       mcore.setTime(0);
-      writeResult("ok");
+      writeResult("Rewinded song");
     } else {
       writeResult("No song is playing");
     }
@@ -111,7 +111,7 @@ function handleCommand(command) {
     mcore.volume = value;
     mcore.audio.volume = mcore.volume / 100;
     dcore.drawVolumeSlider();
-    writeResult("ok");
+    writeResult("Set volume to " + value);
   } else if ( command[0] == "remove" ) {
     if ( command[1] != "all" ) {
       var names = mcore.queue.map(item => {
@@ -134,7 +134,7 @@ function handleCommand(command) {
       mcore.queue = [];
     }
     if ( queue ) queue.render();
-    writeResult("ok");
+    writeResult("Removed" + (command[1] != "all" ? "" : " all") + " songs from the queue");
   } else if ( command[0] == "shuffle" ) {
     for ( var i = mcore.queue.length - 1; i > 0; i-- ) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -143,7 +143,7 @@ function handleCommand(command) {
       mcore.queue[j] = temp;
     }
     if ( queue ) queue.render();
-    writeResult("ok");
+    writeResult("Shuffled the queue");
   } else if ( command[0] == "move" ) {
     var names = mcore.queue.map(item => {
       var songName = decodeURIComponent(decodeURIComponent(item));
@@ -184,7 +184,7 @@ function handleCommand(command) {
         for ( var i = 0; i < indices.length; i++ ) {
           page.toggleItem(encodeURIComponent(page.files[indices[i]]),["","select","deselect"].indexOf(command[0]));
         }
-        writeResult("ok");
+        writeResult((command[0] == "select" ? "Selected" : "Deselected") + " songs");
       } else {
         if ( command[0] == "select" ) {
           page.selected = page.files.map(item => escape(item));
@@ -194,20 +194,20 @@ function handleCommand(command) {
           page.selectionText = page.lang.select_all;
         }
         page.render();
-        writeResult("ok");
+        writeResult((command[0] == "select" ? "Selected" : "Deselected") + " all songs");
       }
     } else if ( command[0] == "add" ) {
       page.addToQueue();
-      writeResult("ok");
+      writeResult("Added songs to the queue");
     }
   } else if ( activePage == "PhotoViewerPage" ) {
     if ( command[0] == "forward" || command[0] == "backward" ) {
       var value = parseInt(command[1]) ? parseInt(command[1]) : 1;
       page.moveImage(command[0] == "forward" ? value : -value);
-      writeResult("ok");
+      writeResult("Moved " + command[0] + " " + value + " image(s)");
     } else if ( command[0] == "rotate" ) {
       page.rotate();
-      writeResult("ok");
+      writeResult("Rotated image 90 degrees");
     } else if ( command[0] == "count" ) {
       writeResult(`${page.files[page.index]} is photo #${page.index + 1}/${page.files.length}`);
     }

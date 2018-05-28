@@ -212,7 +212,47 @@ function handleCommand(command) {
       writeResult(`${page.files[page.index]} is photo #${page.index + 1}/${page.files.length}`);
     }
   }
-  if ( ["goto","home","list","select","deselect","add","forward","backward","rotate","count","listqueue","lq","pause","pp","playnext","pn","openqueue","oq","rewind","volume","remove","shuffle","move"].indexOf(command[0]) <= -1 ) writeResult("Invalid command");
+  if ( command[0] == "help" ) {
+    var table;
+    if ( command[1] == "1" || ! command[1] ) {
+      table = [
+        ["Command  ","Syntax                              ","Function                             ","Alias"],
+        ["listqueue","!listqueue                          ","Lists the songs in the queue         ","!lq  "],
+        ["pause    ","!pause                              ","Plays or pauses the music            ","!pp  "],
+        ["playnext ","!playnext                           ","Triggers the next song in the queue  ","!pn  "],
+        ["openqueue","!openqueue                          ","Opens or closes the queue menu       ","!oq  "],
+        ["goto     ","!goto <music | photos> <album>      ","Moves to a section of the app        ","None "],
+        ["home     ","!home                               ","Moves the home page                  ","None "],
+        ["list     ","!list                               ","Lists items currently on screen      ","None "],
+        ["select   ","!select <songs | all>               ","Selects songs from the music page    ","None "],
+        ["deselect ","!deselect <songs | all>             ","Deselects songs from the music page  ","None "],
+        ["add      ","!add                                ","Adds selected songs to the queue     ","None "],
+        ["forward  ","!forward                            ","Moves forward in photo albums        ","None "],
+        ["backward ","!backward                           ","Moves backward in photo albums       ","None "],
+        ["rotate   ","!rotate                             ","Rotates the photo 90 degrees         ","None "],
+        ["count    ","!count                              ","Returns the current photo's position ","None "],
+        ["rewind   ","!rewind                             ","Rewinds the current song to the start","None "],
+        ["volume   ","!volume <percent | up | down | mute>","Changes the volume                   ","None "]
+      ];
+    } else if ( command[1] == "2" ) {
+      table = [
+        ["Command  ","Syntax                              ","Function                             ","Alias"],
+        ["remove   ","!remove <songs | all>               ","Removes songs from the queue         ","None "],
+        ["shuffle  ","!shuffle                            ","Shuffles the queue                   ","None "],
+        ["move     ","!move <song> <up | down | top>      ","Moves a song in the queue            ","None "],
+        ["help     ","!help <page>                        ","Displays this help text              ","None "]
+      ];
+    } else {
+      writeResult("Invalid page number, use `!help` for the first page");
+    }
+    table.splice(1,0,table[0].map(item => "-".repeat(item.length)));
+    table = table.map(item => "|" + item.join("|") + "|");
+    var length = table[0].length;
+    table = table.join("\n");
+    table = `\n${"-".repeat(length)}\n${table}\n${"-".repeat(length)}\n`;
+    writeResult("```" + table + "```" + ((command[1] == "1" || ! command[1]) ? "Type `!help 2` for the next page" : ""));
+  }
+  if ( ["goto","home","list","select","deselect","add","forward","backward","rotate","count","listqueue","lq","pause","pp","playnext","pn","openqueue","oq","rewind","volume","remove","shuffle","move","help"].indexOf(command[0]) <= -1 ) writeResult("Invalid command");
 }
 
 function writeResult(message) {

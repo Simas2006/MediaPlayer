@@ -169,8 +169,10 @@ class DrawingCoreAgent {
 function readableSongName(song) {
   var songName = decodeURIComponent(decodeURIComponent(song));
   songName = songName.split("/")[songName.split("/").length - 1].split(".").slice(0,-1).join(".");
-  if ( ! isNaN(parseInt(songName.slice(0,2))) ) songName = songName.slice(3);
-  return songName;
+  for ( var index = 0; index < songName.length; index++ ) {
+    if ( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(songName.charAt(index)) > -1 ) break;
+  }
+  return decodeURIComponent(songName.slice(index));
 }
 
 window.onerror = function(message,url,line) {
